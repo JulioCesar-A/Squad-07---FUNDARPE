@@ -25,4 +25,14 @@ class ProdutorCulturalBase(BaseModel):
 
 
 
+# Classes de Requisição para criação de Produtores Culturais
+class ProdutorPessoaFisicaCreateRequest(ProdutorCulturalBase):
+    nome_completo: str
+    cpf: str
+    data_nascimento: date
 
+class ProdutorPessoaJuridicaCreateRequest(ProdutorCulturalBase):
+    razao_social: str
+    nome_fantasia: str
+    cnpj: str
+    representante: RepresentantePessoaJuridica
