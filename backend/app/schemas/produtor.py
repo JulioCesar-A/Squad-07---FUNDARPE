@@ -36,3 +36,36 @@ class ProdutorPessoaJuridicaCreateRequest(ProdutorCulturalBase):
     nome_fantasia: str
     cnpj: str
     representante: RepresentantePessoaJuridica
+
+
+
+# Classes de Requisição para Atualização de Produtores Culturais
+class EnderecoUpdate(BaseModel):
+    logradouro : Optional[str] = None
+    numero : Optional[str] = None
+    bairro : Optional[str] = None
+    cidade : Optional[str] = None
+    estado : Optional[str] = None
+    cep : Optional[str] = None
+
+class RepresentantePessoaJuridicaUpdate(BaseModel):
+    nome_completo: Optional[str] = None
+    cpf: Optional[str] = None
+    data_nascimento: Optional[date] = None
+
+class ProdutorCulturalUpdateRequest(BaseModel):
+    email: Optional[EmailStr] = None
+    senha: Optional[str] = None
+    ativo: Optional[int] = None
+    endereco: Optional[Endereco] = None
+
+class ProdutorPessoaFisicaUpdateRequest(ProdutorCulturalUpdateRequest):
+    nome_completo: Optional[str] = None
+    cpf: Optional[str] = None
+    data_nascimento: Optional[date] = None
+
+class ProdutorPessoaJuridicaUpdateRequest(ProdutorCulturalUpdateRequest):
+    razao_social: Optional[str] = None
+    nome_fantasia: Optional[str] = None
+    cnpj: Optional[str] = None
+    representante: Optional[RepresentantePessoaJuridica] = None
