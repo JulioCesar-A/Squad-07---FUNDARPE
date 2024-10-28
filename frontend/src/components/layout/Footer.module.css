@@ -1,0 +1,19 @@
+.footer {
+    background-color: #5258A4;
+    color: #fff;
+    padding: 2em;
+    text-align: center;
+    width: 100%;
+
+  
+}
+.contaner {
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+   
+}
+
+.top {
+    text-align: left;
+}
