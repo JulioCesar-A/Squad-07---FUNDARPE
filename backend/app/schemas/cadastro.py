@@ -41,6 +41,19 @@ class AnexosRetorno(BaseModel):
     tipo_doc : NomeAnexos
     status : StatusGerais
 
+    @model_validator(mode="before")
+    def checar_ids(cls, values):
+        id_cadastro = values.get('id_cadastro')
+        id_renovacao = values.get('id_renovacao')
+
+        
+        if id_cadastro is not None and id_renovacao is not None:
+            raise ValueError('Apenas um dos campos id_cadastro ou id_renovacao deve ser preenchido.')
+
+        if id_cadastro is None and id_renovacao is None:
+            raise ValueError('Um dos campos id_cadastro ou id_renovacao deve ser preenchido.')
+
+        return values
 
 
 class CadastroRetorno(BaseModel):
