@@ -19,3 +19,12 @@ class RenovacaoCreateRequest(BaseModel):
     data_renovacao : date = Field(default_factory=get_data_atual)
     data_expiracao : date = Field(default_factory=get_data_mais_um_ano)
 
+
+
+
+# Classes de Requisição para atualização de Status dos Cadastros e Renovações
+class CadastroUpdateRequest(BaseModel):
+    status : Optional[StatusGerais] = None
+
+class RenovacaoUpdateRequest(BaseModel):
+    status : Optional[StatusGerais] = None
