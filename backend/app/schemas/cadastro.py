@@ -28,3 +28,30 @@ class CadastroUpdateRequest(BaseModel):
 
 class RenovacaoUpdateRequest(BaseModel):
     status : Optional[StatusGerais] = None
+
+
+
+# Classes de Resposta de Requisição
+class AnexosRetorno(BaseModel):
+    id_anexo : int
+    id_cadastro : Optional[int] = None
+    id_renovacao : Optional[int] = None
+    extensao : str
+    data_upload : date
+    tipo_doc : NomeAnexos
+    status : StatusGerais
+
+
+
+class CadastroRetorno(BaseModel):
+    id : int
+    status : StatusGerais
+    data_cadastro : date
+    anexos : List[AnexosRetorno]
+
+class RenovacaoRetorno(BaseModel):
+    id : int
+    data_renovacao : date
+    data_expiracao : date
+    status : StatusGerais
+    anexos : List[AnexosRetorno]
