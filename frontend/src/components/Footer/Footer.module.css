@@ -1,13 +1,13 @@
-.footer {
+footer {
     background-color: #5258A4;
     color: #fff;
-    padding: 2em;
     text-align: center;
-    width: 100%;
+    width: 100vw;
+    padding-top: 2em;
+    padding-bottom: 2em;
 
-  
 }
-.contaner {
+.container {
     display: flex;
     justify-content: space-between;
     list-style-type: none;

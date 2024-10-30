@@ -1,4 +1,3 @@
-
 import styles from './Footer.module.css'
 import facebook from '../../assets/images/Facebook.svg'
 import whatsApp from '../../assets/images/WhatsApp.svg'
@@ -8,8 +7,9 @@ import logoFudarpe from '../../assets/images/Marcas_governo.png'
 
 function Footer() {
   return (
-    <div className={styles.footer}>
-        <div className= {styles.contaner}>
+    <footer>
+        
+        <div className= {styles.container}>
             <div className={styles.top}>
                 <h4>PAINEL</h4>
                 <p>Editais e Oportunidades</p>
@@ -36,7 +36,7 @@ function Footer() {
         </div>
 
       
-    </div>
+    </footer>
   )
 }
 
