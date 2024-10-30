@@ -1,7 +1,7 @@
 
 import './App.css'
 
-import Footer from "./components/layout/Footer"
+import Footer from "./components/Footer/Footer"
 
 
 
@@ -11,7 +11,7 @@ function App() {
    
     <>
       
-     <Footer />
+      <Footer />
       
 
     </>
