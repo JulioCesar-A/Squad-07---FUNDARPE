@@ -1,5 +1,6 @@
 pymysql
 pydantic
+python-dateutil
 sqlalchemy
 uvicorn
 fastapi[all]
