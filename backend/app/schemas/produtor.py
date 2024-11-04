@@ -3,11 +3,12 @@ from typing import List, Optional
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+import re
 import schemas.cadastro as cad
 
 
 
-def checar_data_nascimento(dt_nasc : date):
+def checar_data_nascimento(dt_nasc : date) -> date:
 
     dt_18_anos_atras = date.today() - relativedelta(years=18)
 
@@ -18,6 +19,21 @@ def checar_data_nascimento(dt_nasc : date):
     
 
     return dt_nasc 
+
+def validar_senha(senha : str) -> str:
+
+    if len(senha) < 8:
+        raise ValueError("A senha de ter no mínimo 8 caracteres.")
+    if not re.search(r"[A-Z]", senha):
+        raise ValueError("A senha deve conter pelo menos uma letra maiúscula.")
+    if not re.search(r"[a-z]", senha):
+        raise ValueError("A senha deve conter pelo menos uma letra minúscula")
+    if not re.search(r"\d", senha):
+        raise ValueError("A senha deve conter pelo menos um dígito.")
+    if not re.search(r"[!@#$%^&*,.?\":|]", senha):
+        raise ValueError("A senha deve conter pelo menos uma caracter especial.")
+    
+    return senha
 
 class Endereco(BaseModel):
     logradouro : str
@@ -41,6 +57,8 @@ class ProdutorCulturalBase(BaseModel):
     email : EmailStr
     senha : str = Field(min_length=8, description="Senha com no mínimo 8 caracteres")
     endereco : Endereco
+
+    _validar_senha = field_validator("senha", allow_reuse=True)(validar_senha)
 
 
 
@@ -80,9 +98,12 @@ class RepresentantePessoaJuridicaUpdate(BaseModel):
 
 class ProdutorCulturalUpdateRequest(BaseModel):
     email : Optional[EmailStr] = None
-    senha : Optional[str] = None
+    senha : Optional[str] = Field(None,min_length=8, description="Senha com no mínimo 8 caracteres (opcional)")
     ativo : Optional[int] = None
     endereco : Optional[Endereco] = None
+
+    _validar_senha = field_validator("senha", allow_reuse=True)(validar_senha)
+
 
 class ProdutorPessoaFisicaUpdateRequest(ProdutorCulturalUpdateRequest):
     nome_completo : Optional[str] = None
