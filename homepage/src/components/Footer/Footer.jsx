@@ -29,9 +29,7 @@ function Footer() {
                 <img src={facebook} alt="" className={styles.img}/>
             </div>
             <div className= {styles.top}>
-
-                <h4>_</h4>
-                <img src={logoFudarpe} alt="" width= '200px' />
+                <img src={logoFudarpe} alt="" width= '350px' />
             </div>
         </div>
 

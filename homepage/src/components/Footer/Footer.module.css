@@ -2,18 +2,33 @@ footer {
     background-color: #5258A4;
     color: #fff;
     text-align: center;
-    width: 100vw;
+    width: 100%;
     padding-top: 2em;
     padding-bottom: 2em;
-
 }
 .container {
     display: flex;
     justify-content: space-between;
     list-style-type: none;
-   
 }
 
 .top {
     text-align: left;
+    margin-left: 50px;
+    margin-right: 50px;
 }
+
+h4{
+    font-size: 25px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+p{
+    color: white;
+}
+
+img{
+    margin-top: 15px;
+}
+
