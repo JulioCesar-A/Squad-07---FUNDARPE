@@ -1,0 +1,79 @@
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    background-color: #5258A4;
+    color: white;
+  }
+  
+  .logo img {
+    height: 40px;
+
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 22px;
+    font-weight: bold;
+    transition: color 0.3s;
+    padding-right: 50px;
+
+  }
+  
+  .login-section {
+    margin-top: 5px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .login-section p {
+    margin-top: 0px ;
+    font-size: 14px;
+    color: white;
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #47ACE1;
+    color: black;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dropdown-menu::before{
+    content: "";
+    position: absolute;
+    top: -10px; /* Ajuste para alinhar a seta acima do dropdown */
+    right: 20px; /* Ajuste para centralizar ou alinhar com o botão */
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #4da6ff transparent; /* Cor do dropdown */
+  }
+  
+  .dropdown-menu a {
+    padding: 10px;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+  }
+  
+  .dropdown-menu a:hover {
+    background: #62BB51;
+    color: white;
+  }
+  
