@@ -1,4 +1,4 @@
-pymysql
+asyncmy
 pydantic
 python-dateutil
 sqlalchemy
