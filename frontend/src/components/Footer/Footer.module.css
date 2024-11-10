@@ -5,15 +5,35 @@ footer {
     width: 100vw;
     padding-top: 2em;
     padding-bottom: 2em;
+   
 
 }
 .container {
     display: flex;
     justify-content: space-between;
     list-style-type: none;
+    padding: 2em;
+    
    
 }
 
 .top {
     text-align: left;
+    line-height: 1em;
+    
+}
+.top h4 {
+    font-size: 32px;
+    
+}
+
+.img {
+    width: 55px;
+    
+}
+
+.social {
+    
+    display: flex;
+    justify-content: space-between;
 }

@@ -24,14 +24,17 @@ function Footer() {
             </div>
             <div className={styles.top}>
                 <h4>REDES SOCIAIS</h4>
+                <div className={styles.social}>
                 <img src={Instagram} alt="" className={styles.img}/>
                 <img src={whatsApp} alt="" className={styles.img}/>
                 <img src={facebook} alt="" className={styles.img}/>
+                </div>
             </div>
             <div className= {styles.top}>
 
-                <h4>_</h4>
-                <img src={logoFudarpe} alt="" width= '200px' />
+                <br />
+                <br />
+                <img src={logoFudarpe} alt="" width= '350px' />
             </div>
         </div>
 
