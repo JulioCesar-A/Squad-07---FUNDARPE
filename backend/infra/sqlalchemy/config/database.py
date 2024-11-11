@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 # Variáveis de conexão com banco de dados (teste)
 
 DATABASE_USERNAME = "User_Prod"
-DATABASE_PASSWORD = "User_Prod"
+DATABASE_PASSWORD = "123456"
 DATABASE_HOST = "localhost"
 DATABASE_PORT = "3306"
 DATABASE_NAME = "CPC_DB"
