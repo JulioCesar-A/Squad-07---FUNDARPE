@@ -85,7 +85,7 @@ class RepresentantePessoaJuridica(Base):
 class Cadastro(Base):
     __tablename__ = "CADASTRO_TB"
 
-    id = Column("ID_CAD", Integer, primary_key=True)
+    id = Column("ID_CAD", Integer, primary_key=True, auto_increment=True)
 
     id_produtor = Column("FK_PROD_CULT", String, ForeignKey('PROD_CULT_TB.ID_PROD_CULT'), nullable=False)
     
@@ -104,7 +104,7 @@ class Cadastro(Base):
 class Renovacao(Base):
     __tablename__ = "RENOVACAO_TB"
 
-    id = Column("ID_RENOVACAO", Integer, primary_key=True)
+    id = Column("ID_RENOVACAO", Integer, primary_key=True, auto_increment=True)
     id_produtor = Column("FK_PROD_CULT", String, ForeignKey('PROD_CULT_TB.ID_PROD_CULT'), nullable=False)
     id_cadastro = Column("FK_CAD", Integer, ForeignKey('CADASTRO_TB.ID_CAD'), nullable=False)
     status = Column("STATUS", Enum(StatusGerais), nullable=False, default=StatusGerais.RECEBIDO)
