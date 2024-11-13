@@ -24,22 +24,23 @@ engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 
 # Configura conexão assíncrona
 AsyncSessionLocal = sessionmaker(
-    autoflush=False, autocommit=False, bind=engine, class_=AsyncSession
+    autoflush=False, autocommit=False, bind=engine, class_=AsyncSession, expire_on_commit=False
 )
 
 Base = declarative_base()
 
 
 
-def criar_db():
-    Base.metadata.create.all(bind=engine)
-
+async def criar_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 # Função de dependência
-@asynccontextmanager
 async def get_db():
-    try:
-        async with AsyncSessionLocal() as session:
+    async with AsyncSessionLocal() as session:
+        try:    
             yield session
-    except OperationalError as e:
-        raise HTTPException(status_code=503, detail="Erro ao conectar ao banco de dados. O serviço se encontra indisponível")
+        except OperationalError as e:
+            raise HTTPException(status_code=503, detail="Erro ao conectar ao banco de dados. O serviço se encontra indisponível")
+        finally:
+            await session.close()

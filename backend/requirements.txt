@@ -1,4 +1,5 @@
 asyncmy
+cryptography
 pydantic
 python-dateutil
 sqlalchemy

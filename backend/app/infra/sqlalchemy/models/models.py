@@ -1,7 +1,7 @@
 from sqlalchemy import Column, ForeignKey, String, BLOB, Boolean, Enum, DATE, Integer
 from sqlalchemy.orm import relationship
-from config.database import Base
-from app.schemas.enums import StatusGerais, NomeAnexos
+from infra.sqlalchemy.config.database import Base
+from schemas.enums import StatusGerais, NomeAnexos
 
 
 
