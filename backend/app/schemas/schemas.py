@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr, field_validator, Field, model_validator
 from typing import List, Optional
 from datetime import date
+from fastapi import UploadFile
 from dateutil.relativedelta import relativedelta
 from .enums import StatusGerais, NomeAnexos
 
@@ -42,10 +43,7 @@ def validar_senha(senha : str) -> str:
 
 class Anexo(BaseModel):
     nome_anexo : NomeAnexos
-    extensao : str = Field(max_length=6)
-    data_upload : date = date.today()
-    status : StatusGerais
-
+    arquivo : UploadFile
 
 class Endereco(BaseModel):
     logradouro : str
@@ -68,7 +66,6 @@ class ProdutorCulturalBase(BaseModel):
     email : EmailStr
     senha : str = Field(min_length=8, description="Senha com no mínimo 8 caracteres")
     endereco : Endereco
-
     _validar_senha = field_validator("senha")(validar_senha)
 
 
@@ -84,9 +81,9 @@ class ProdutorPessoaFisicaCreateRequest(ProdutorCulturalBase):
 
 
 class ProdutorPessoaJuridicaCreateRequest(ProdutorCulturalBase):
-    razao_social : str
-    nome_fantasia : str
     cnpj : str 
+    razao_soc : str
+    nome_fant : str
     representante : RepresentantePessoaJuridica
 
 

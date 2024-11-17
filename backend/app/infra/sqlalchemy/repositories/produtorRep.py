@@ -1,4 +1,5 @@
 import os
+from typing import List
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 from schemas import schemas
@@ -12,7 +13,7 @@ class RepositorioProdutor():
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def inserir_produtor_pessoa_fisica(self, dados_produtor: schemas.ProdutorPessoaFisicaCreateRequest, dados_anexos : schemas.Anexo):
+    async def inserir_produtor_pessoa_fisica(self, dados_produtor: schemas.ProdutorPessoaFisicaCreateRequest, dados_anexos : List[schemas.Anexo]):
         try:
             # Verificar se o produtor já existe (via CPF)
             query = select(models.ProdutorPessoaFisica).where(models.ProdutorPessoaFisica.cpf == dados_produtor.cpf)
@@ -102,3 +103,110 @@ class RepositorioProdutor():
                 status_code=400,
                 detail="Erro de integridade: dados duplicados ou incorretos"
             )
+
+
+
+    async def inserir_produtor_pessoa_juridica (self, dados_produtor : schemas.ProdutorPessoaJuridicaCreateRequest, dados_anexos : List[schemas.Anexo]):
+        try:
+            # Verificar se o produtor já existe (via CPF)
+            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorPessoaJuridica.cnpj == dados_produtor.cnoj)
+            result = await self.db.execute(query)
+            produtor_existente = result.scalar()
+
+            if produtor_existente:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Um produtor com este CNPJ já está registrado"
+                )
+
+            # Criando instâncias com dados pré-validados para cada tabela do banco de dados
+            produtor = models.ProdutorCultural(
+            
+                id = "654321",  # Implementar lógica de criação de IDs
+            
+                email = dados_produtor.email,
+                senha = dados_produtor.senha, # Implementar Hashing da senha com bcrypt
+            
+                ativo = True
+            
+            )
+            
+            self.db.add(produtor)
+
+            pessoa_juridica = models.ProdutorPessoaJuridica(
+
+                id = produtor.id,
+
+                cnpj = dados_produtor.cnpj,
+                razao_soc = dados_produtor.razao_soc,
+                nome_fant = dados_produtor.nome_fant
+            )
+           
+            self.db.add(pessoa_juridica)
+
+            representante_pj = models.RepresentantePessoaJuridica(
+
+                id = pessoa_juridica.id,
+
+                nome = dados_produtor.representante.nome,
+                cpf = dados_produtor.representante.cpf,
+                data_nasc = dados_produtor.representante.data_nasc
+
+            )
+
+            self.db.add(representante_pj)
+
+            endereco = models.Endereco(
+                
+                id = produtor.id,
+
+                logradouro = dados_produtor.endereco.logradouro,
+                numero = dados_produtor.endereco.numero,
+                bairro = dados_produtor.endereco.bairro,
+                cidade = dados_produtor.endereco.cidade,
+                estado = dados_produtor.endereco.estado,
+                cep = dados_produtor.endereco.cep
+            
+            )
+
+            self.db.add(endereco)
+
+            cadastro = models.Cadastro(
+                
+                id_produtor = produtor.id,
+                
+                data_cadastro = date.today()
+            
+            )
+
+            self.db.add(cadastro)
+            
+            for anexo in dados_anexos:
+                anexo_inserir = models.Anexo(
+                    
+                    id_cadastro = cadastro.id,
+                    
+                    nome_anexo = anexo.nome_anexo.value,
+                    data_upload = date.today(),
+                    extensao = os.path.splitext(anexo.arquivo.filename)[1].lower(),
+
+                    arquivo = await anexo.arquivo.read()
+                )
+
+                self.db.add(anexo_inserir)
+            
+            # Commit e refresh da instância recém-adicionada
+            await self.db.commit()
+            await self.db.refresh(produtor)
+
+            return {"message": "Produtor cultural pessoa jurídica inserido com sucesso!"}
+
+        except IntegrityError:
+            await self.db.rollback()
+            raise HTTPException(
+                status_code=400,
+                detail="Erro de integridade: dados duplicados ou incorretos"
+            )
+        
+
+    
