@@ -1,3 +1,4 @@
+import os
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 from schemas import schemas
@@ -11,7 +12,7 @@ class RepositorioProdutor():
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def inserir_produtor_pessoa_fisica(self, dados_produtor: schemas.ProdutorPessoaFisicaCreateRequest):
+    async def inserir_produtor_pessoa_fisica(self, dados_produtor: schemas.ProdutorPessoaFisicaCreateRequest, dados_anexos : schemas.Anexo):
         try:
             # Verificar se o produtor já existe (via CPF)
             query = select(models.ProdutorPessoaFisica).where(models.ProdutorPessoaFisica.cpf == dados_produtor.cpf)
@@ -74,6 +75,20 @@ class RepositorioProdutor():
             )
 
             self.db.add(cadastro)
+            
+            for anexo in dados_anexos:
+                anexo_inserir = models.Anexo(
+                    
+                    id_cadastro = cadastro.id,
+                    
+                    nome_anexo = anexo.nome_anexo.value,
+                    data_upload = date.today(),
+                    extensao = os.path.splitext(anexo.arquivo.filename)[1].lower(),
+
+                    arquivo = await anexo.arquivo.read()
+                )
+
+                self.db.add(anexo_inserir)
             
             # Commit e refresh da instância recém-adicionada
             await self.db.commit()
