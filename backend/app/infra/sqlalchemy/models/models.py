@@ -85,7 +85,7 @@ class RepresentantePessoaJuridica(Base):
 class Cadastro(Base):
     __tablename__ = "CADASTRO_TB"
 
-    id = Column("ID_CAD", Integer, primary_key=True, auto_increment=True)
+    id = Column("ID_CAD", Integer, primary_key=True)
 
     id_produtor = Column("FK_PROD_CULT", String, ForeignKey('PROD_CULT_TB.ID_PROD_CULT'), nullable=False)
     
@@ -104,7 +104,7 @@ class Cadastro(Base):
 class Renovacao(Base):
     __tablename__ = "RENOVACAO_TB"
 
-    id = Column("ID_RENOVACAO", Integer, primary_key=True, auto_increment=True)
+    id = Column("ID_RENOVACAO", Integer, primary_key=True)
     id_produtor = Column("FK_PROD_CULT", String, ForeignKey('PROD_CULT_TB.ID_PROD_CULT'), nullable=False)
     id_cadastro = Column("FK_CAD", Integer, ForeignKey('CADASTRO_TB.ID_CAD'), nullable=False)
     status = Column("STATUS", Enum(StatusGerais), nullable=False, default=StatusGerais.RECEBIDO)
@@ -127,12 +127,15 @@ class Anexo(Base):
     __tablename__ = "ANEXO_TB"
 
     id = Column("ID_ANEXO", Integer, primary_key=True)
-    id_cadastro = Column("FK_CAD", Integer, ForeignKey('CADASTRO_TB.ID_CAD'), nullable=True)
+    
+    id_cadastro = Column("FK_CAD", Integer, ForeignKey('CADASTRO_TB.ID_CAD'), nullable=False, primary_key=True)
     id_renovacao = Column("FK_REN", Integer, ForeignKey('RENOVACAO_TB.ID_RENOVACAO'), nullable=True)
+    
     nome_anexo = Column("NOME_ANEXO", Enum(NomeAnexos), nullable=False)
     data_upload = Column("DATA_UPLOAD", DATE, nullable=False)
     status = Column("STATUS", Enum(StatusGerais), nullable=False, default=StatusGerais.RECEBIDO)
     extensao = Column("EXTENSAO", String(6), nullable=False)
+    
     arquivo = Column("ARQUIVO", BLOB, nullable=False)
 
     # Relacionamentos
