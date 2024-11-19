@@ -26,6 +26,17 @@ class RepositorioProdutor():
                     detail="Um produtor com este CPF já está registrado"
                 )
 
+            # Verificar se o produtor já existe (via e-mail)
+            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorPessoaJuridica.email == dados_produtor.email)
+            result = await self.db.execute(query)
+            produtor_existente = result.scalar()
+
+            if produtor_existente:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Um produtor com este e-mail já está registrado"
+                )
+
             # Criando instâncias com dados pré-validados para cada tabela do banco de dados
             produtor = models.ProdutorCultural(
             
@@ -78,6 +89,9 @@ class RepositorioProdutor():
             self.db.add(cadastro)
             
             for anexo in dados_anexos:
+
+                arquivo = await anexo.arquivo.read()
+
                 anexo_inserir = models.Anexo(
                     
                     id_cadastro = cadastro.id,
@@ -85,8 +99,7 @@ class RepositorioProdutor():
                     nome_anexo = anexo.nome_anexo.value,
                     data_upload = date.today(),
                     extensao = os.path.splitext(anexo.arquivo.filename)[1].lower(),
-
-                    arquivo = await anexo.arquivo.read()
+                    arquivo = arquivo
                 )
 
                 self.db.add(anexo_inserir)
@@ -104,12 +117,10 @@ class RepositorioProdutor():
                 detail="Erro de integridade: dados duplicados ou incorretos"
             )
 
-
-
     async def inserir_produtor_pessoa_juridica (self, dados_produtor : schemas.ProdutorPessoaJuridicaCreateRequest, dados_anexos : List[schemas.Anexo]):
         try:
-            # Verificar se o produtor já existe (via CPF)
-            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorPessoaJuridica.cnpj == dados_produtor.cnoj)
+            # Verificar se o produtor já existe (via CNPJ)
+            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorPessoaJuridica.cnpj == dados_produtor.cnpj)
             result = await self.db.execute(query)
             produtor_existente = result.scalar()
 
@@ -117,6 +128,17 @@ class RepositorioProdutor():
                 raise HTTPException(
                     status_code=400,
                     detail="Um produtor com este CNPJ já está registrado"
+                )
+
+            # Verificar se o produtor já existe (via e-mail)
+            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorPessoaJuridica.email == dados_produtor.email)
+            result = await self.db.execute(query)
+            produtor_existente = result.scalar()
+
+            if produtor_existente:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Um produtor com este e-mail já está registrado"
                 )
 
             # Criando instâncias com dados pré-validados para cada tabela do banco de dados
@@ -181,7 +203,11 @@ class RepositorioProdutor():
 
             self.db.add(cadastro)
             
+           
             for anexo in dados_anexos:
+
+                arquivo = await anexo.arquivo.read()
+
                 anexo_inserir = models.Anexo(
                     
                     id_cadastro = cadastro.id,
@@ -189,8 +215,7 @@ class RepositorioProdutor():
                     nome_anexo = anexo.nome_anexo.value,
                     data_upload = date.today(),
                     extensao = os.path.splitext(anexo.arquivo.filename)[1].lower(),
-
-                    arquivo = await anexo.arquivo.read()
+                    arquivo = arquivo
                 )
 
                 self.db.add(anexo_inserir)
