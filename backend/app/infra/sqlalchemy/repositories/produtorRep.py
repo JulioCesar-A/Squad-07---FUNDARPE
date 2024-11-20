@@ -2,16 +2,32 @@ import os
 from typing import List
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from schemas import schemas
+from schemas import schemas, enums
 from ..models import models
 from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
+from sqlalchemy import text
 
 class RepositorioProdutor():
 
     def __init__(self, db: AsyncSession):
         self.db = db
+
+
+
+
+    async def calcular_id_anexo_por_cadastro(self, db, fk_cad):
+        # Consultando o maior ID_ANEXO com ORM
+        query = select(models.Anexo).filter(models.Anexo.id_cadastro == fk_cad).order_by(models.Anexo.id.desc()).limit(1)
+        result = await db.execute(query)
+        maior_anexo = result.scalar_one_or_none()
+
+        # Calculando o próximo ID
+        proximo_id = (maior_anexo.id_cadastro if maior_anexo else 0) + 1
+        return proximo_id
+
 
     async def inserir_produtor_pessoa_fisica(self, dados_produtor: schemas.ProdutorPessoaFisicaCreateRequest, dados_anexos : List[schemas.Anexo]):
         try:
@@ -27,7 +43,7 @@ class RepositorioProdutor():
                 )
 
             # Verificar se o produtor já existe (via e-mail)
-            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorPessoaJuridica.email == dados_produtor.email)
+            query = select(models.ProdutorPessoaFisica).where(models.ProdutorCultural.email == dados_produtor.email)
             result = await self.db.execute(query)
             produtor_existente = result.scalar()
 
@@ -87,22 +103,26 @@ class RepositorioProdutor():
             )
 
             self.db.add(cadastro)
+            await self.db.flush() 
+
             
-            for anexo in dados_anexos:
+            novo_id = await self.calcular_id_anexo_por_cadastro(self.db, cadastro.id)
+            for index, anexo in enumerate(dados_anexos):
 
                 arquivo = await anexo.arquivo.read()
 
+
                 anexo_inserir = models.Anexo(
                     
+                    id = novo_id + index,
                     id_cadastro = cadastro.id,
-                    
-                    nome_anexo = anexo.nome_anexo.value,
+                    nome_anexo = anexo.nome_anexo,
                     data_upload = date.today(),
                     extensao = os.path.splitext(anexo.arquivo.filename)[1].lower(),
                     arquivo = arquivo
                 )
-
                 self.db.add(anexo_inserir)
+
             
             # Commit e refresh da instância recém-adicionada
             await self.db.commit()
@@ -131,7 +151,7 @@ class RepositorioProdutor():
                 )
 
             # Verificar se o produtor já existe (via e-mail)
-            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorPessoaJuridica.email == dados_produtor.email)
+            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorCultural.email == dados_produtor.email)
             result = await self.db.execute(query)
             produtor_existente = result.scalar()
 
@@ -170,9 +190,9 @@ class RepositorioProdutor():
 
                 id = pessoa_juridica.id,
 
-                nome = dados_produtor.representante.nome,
+                nome = dados_produtor.representante.nome_completo,
                 cpf = dados_produtor.representante.cpf,
-                data_nasc = dados_produtor.representante.data_nasc
+                data_nasc = dados_produtor.representante.data_nascimento
 
             )
 
@@ -195,6 +215,7 @@ class RepositorioProdutor():
 
             cadastro = models.Cadastro(
                 
+            
                 id_produtor = produtor.id,
                 
                 data_cadastro = date.today()
@@ -202,22 +223,24 @@ class RepositorioProdutor():
             )
 
             self.db.add(cadastro)
-            
+            await self.db.flush() 
+
            
-            for anexo in dados_anexos:
+            novo_id = await self.calcular_id_anexo_por_cadastro(self.db, cadastro.id)
+            for index, anexo in enumerate(dados_anexos):
 
                 arquivo = await anexo.arquivo.read()
 
+
                 anexo_inserir = models.Anexo(
                     
+                    id = novo_id + index,
                     id_cadastro = cadastro.id,
-                    
-                    nome_anexo = anexo.nome_anexo.value,
+                    nome_anexo = anexo.nome_anexo,
                     data_upload = date.today(),
                     extensao = os.path.splitext(anexo.arquivo.filename)[1].lower(),
                     arquivo = arquivo
                 )
-
                 self.db.add(anexo_inserir)
             
             # Commit e refresh da instância recém-adicionada
