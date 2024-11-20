@@ -27,7 +27,7 @@ class RepositorioProdutor():
                 )
 
             # Verificar se o produtor já existe (via e-mail)
-            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorPessoaJuridica.email == dados_produtor.email)
+            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorCultural.email == dados_produtor.email)
             result = await self.db.execute(query)
             produtor_existente = result.scalar()
 
@@ -87,6 +87,7 @@ class RepositorioProdutor():
             )
 
             self.db.add(cadastro)
+            await self.db.flush() 
             
             for anexo in dados_anexos:
 
@@ -101,8 +102,8 @@ class RepositorioProdutor():
                     extensao = os.path.splitext(anexo.arquivo.filename)[1].lower(),
                     arquivo = arquivo
                 )
-
                 self.db.add(anexo_inserir)
+
             
             # Commit e refresh da instância recém-adicionada
             await self.db.commit()
@@ -131,7 +132,7 @@ class RepositorioProdutor():
                 )
 
             # Verificar se o produtor já existe (via e-mail)
-            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorPessoaJuridica.email == dados_produtor.email)
+            query = select(models.ProdutorPessoaJuridica).where(models.ProdutorCultural.email == dados_produtor.email)
             result = await self.db.execute(query)
             produtor_existente = result.scalar()
 
@@ -195,6 +196,7 @@ class RepositorioProdutor():
 
             cadastro = models.Cadastro(
                 
+            
                 id_produtor = produtor.id,
                 
                 data_cadastro = date.today()
@@ -202,7 +204,8 @@ class RepositorioProdutor():
             )
 
             self.db.add(cadastro)
-            
+            await self.db.flush() 
+
            
             for anexo in dados_anexos:
 
