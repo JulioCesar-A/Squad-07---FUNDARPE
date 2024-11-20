@@ -8,7 +8,7 @@ from ..models import models
 from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-
+from services.geradorHashing import gerar_hashing_senha
 class RepositorioProdutor():
 
     def __init__(self, db: AsyncSession):
@@ -58,7 +58,7 @@ class RepositorioProdutor():
                 id - uuid.uuid4(),
 
                 email = dados_produtor.email,
-                senha = dados_produtor.senha, # Implementar Hashing da senha com bcrypt
+                senha = await gerar_hashing_senha(dados_produtor.senha),
             
                 ativo = True
             
@@ -165,7 +165,7 @@ class RepositorioProdutor():
                 id = uuid.uuid4(),
             
                 email = dados_produtor.email,
-                senha = dados_produtor.senha, # Implementar Hashing da senha com bcrypt
+                senha = await gerar_hashing_senha(dados_produtor.senha),
             
                 ativo = True
             
