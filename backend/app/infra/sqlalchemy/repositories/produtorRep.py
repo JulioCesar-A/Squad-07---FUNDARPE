@@ -1,14 +1,13 @@
 import os
+import uuid
 from typing import List
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from schemas import schemas, enums
+from schemas import schemas
 from ..models import models
 from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.orm import selectinload
-from sqlalchemy import text
 
 class RepositorioProdutor():
 
@@ -19,7 +18,7 @@ class RepositorioProdutor():
 
 
     async def calcular_id_anexo_por_cadastro(self, db, fk_cad):
-        # Consultando o maior ID_ANEXO com ORM
+        # Consultando o maior ID_ANEXO 
         query = select(models.Anexo).filter(models.Anexo.id_cadastro == fk_cad).order_by(models.Anexo.id.desc()).limit(1)
         result = await db.execute(query)
         maior_anexo = result.scalar_one_or_none()
@@ -56,8 +55,8 @@ class RepositorioProdutor():
             # Criando instâncias com dados pré-validados para cada tabela do banco de dados
             produtor = models.ProdutorCultural(
             
-                id = "123456",  # Implementar lógica de criação de IDs
-            
+                id - uuid.uuid4(),
+
                 email = dados_produtor.email,
                 senha = dados_produtor.senha, # Implementar Hashing da senha com bcrypt
             
@@ -163,7 +162,7 @@ class RepositorioProdutor():
             # Criando instâncias com dados pré-validados para cada tabela do banco de dados
             produtor = models.ProdutorCultural(
             
-                id = "654321",  # Implementar lógica de criação de IDs
+                id = uuid.uuid4(),
             
                 email = dados_produtor.email,
                 senha = dados_produtor.senha, # Implementar Hashing da senha com bcrypt
