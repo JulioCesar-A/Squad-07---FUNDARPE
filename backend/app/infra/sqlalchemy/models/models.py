@@ -123,6 +123,7 @@ class Renovacao(Base):
 class Anexo(Base):
     __tablename__ = "ANEXO_TB"
 
+
     id = Column("ID_ANEXO", Integer, primary_key=True)
     id_cadastro = Column("FK_CAD", Integer, ForeignKey('CADASTRO_TB.ID_CAD'), nullable=False, primary_key=True)
     

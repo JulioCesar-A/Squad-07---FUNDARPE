@@ -104,7 +104,6 @@ class RepositorioProdutor():
 
             self.db.add(cadastro)
             await self.db.flush() 
-
             
             novo_id = await self.calcular_id_anexo_por_cadastro(self.db, cadastro.id)
             for index, anexo in enumerate(dados_anexos):
