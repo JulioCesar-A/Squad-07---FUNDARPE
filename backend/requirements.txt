@@ -1,4 +1,6 @@
-pymysql
+asyncmy
+cryptography
+bcrypt
 pydantic
 python-dateutil
 sqlalchemy

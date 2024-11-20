@@ -1,8 +1,172 @@
-from fastapi import FastAPI
+from typing import List
+from fastapi import FastAPI, Depends, File, Form, HTTPException, UploadFile
+from sqlalchemy.ext.asyncio import AsyncSession
+from schemas import schemas
+from infra.sqlalchemy.repositories import produtorRep
+from infra.sqlalchemy.config.database import get_db
 
 app = FastAPI()
 
 
 @app.get("/")
-def home():
-    return {"Mensagem" : "Página inicial"}
+async def home():
+    return {"message" : "Hello, world!"}
+
+@app.post("/produtor-pessoa-fisica", status_code=201)
+async def criar_produtor_pessoa_fisica(
+    nome_completo: str = Form(...),
+    cpf: str = Form(...),
+    email: str = Form(...),
+    senha: str = Form(...),
+    data_nascimento: str = Form(...),
+    logradouro: str = Form(...),
+    numero: str = Form(...),
+    bairro: str = Form(...),
+    cidade: str = Form(...),
+    estado: str = Form(...),
+    cep: str = Form(...),
+    
+    anexos : List[UploadFile] = File(...),
+    nomes_anexos : List[str] = Form(...),
+    
+    db : AsyncSession = Depends(get_db)
+):
+    repositorio_produtor = produtorRep.RepositorioProdutor(db)
+
+
+
+    try:
+
+        endereco = schemas.Endereco(
+            logradouro = logradouro,
+            numero = numero,
+            bairro = bairro,
+            cidade = cidade,
+            estado = estado,
+            cep = cep
+        )
+
+        dados_produtor = schemas.ProdutorPessoaFisicaCreateRequest(
+            email = email,
+            senha = await senha,
+            nome_completo = nome_completo,
+            cpf = cpf,
+            data_nascimento = data_nascimento,
+            endereco = endereco
+        )
+
+        nomes_anexos = nomes_anexos[0].split(",")
+
+        # Validando e processando os anexos
+        if len(anexos) != len(nomes_anexos):
+            raise HTTPException(
+                status_code=400
+            )
+
+
+        dados_anexos = []
+    
+
+        for index, arquivo in enumerate(anexos):
+            dados_anexos.append(schemas.Anexo(
+                nome_anexo = nomes_anexos[index],
+                arquivo = arquivo
+            ))
+
+
+        # Chamando a função do repositório para inserir PF
+        resultado = await repositorio_produtor.inserir_produtor_pessoa_fisica(dados_produtor, dados_anexos)
+        return resultado
+    
+    except HTTPException as e:
+        raise e
+
+        # Erros inesperados
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Ocorreu um erro inesperado: {str(e)}"
+        )
+    
+
+@app.post("/produtor-pessoa-juridica", status_code=201)
+async def criar_produtor_pessoa_juridica(
+    email : str = Form(...),
+    senha : str = Form(...),
+    cnpj : str = Form(...),
+    razao_social : str = Form(...),
+    nome_fantasia : str = Form(...),
+
+    nome_rep : str = Form(...),
+    cpf_rep : str = Form(...),
+    dt_nasc_rep : str = Form(...),
+
+    logradouro : str = Form(...),
+    numero : str = Form(...),
+    bairro : str = Form(...),
+    cidade : str = Form(...),
+    estado : str = Form(...),
+    cep : str = Form(...),
+
+    anexos : List[UploadFile] = File(...),
+    nomes_anexos : List[str] = Form(...),
+    
+    db : AsyncSession = Depends(get_db)
+):
+    repositorio_produtor = produtorRep.RepositorioProdutor(db)
+
+    try: 
+
+        endereco = schemas.Endereco(
+            logradouro = logradouro,
+            numero = numero,
+            bairro = bairro,
+            cidade = cidade,
+            estado = estado,
+            cep = cep
+        )
+
+        representante = schemas.RepresentantePessoaJuridica(
+            nome_completo = nome_rep,
+            cpf = cpf_rep,
+            data_nascimento = dt_nasc_rep   
+        )
+
+        dados_produtor = schemas.ProdutorPessoaJuridicaCreateRequest(
+            email = email,
+            senha = senha,
+            representante = representante,
+            endereco = endereco,
+            cnpj = cnpj,
+            razao_soc = razao_social,
+            nome_fant = nome_fantasia
+        )
+
+        nomes_anexos = nomes_anexos[0].split(",")
+
+        # Validando e processando os anexos
+        if len(anexos) != len(nomes_anexos):
+            raise HTTPException(
+                status_code=400
+            )
+        
+        dados_anexos = []
+
+        for index, arquivo in enumerate(anexos):
+            dados_anexos.append(schemas.Anexo(
+                nome_anexo = nomes_anexos[index],
+                arquivo = arquivo
+            ))
+
+        # Chamando a função do repositório para inserir PJ
+        resultado = await repositorio_produtor.inserir_produtor_pessoa_juridica(dados_produtor, dados_anexos)
+        return resultado
+
+    except HTTPException as e:
+        raise e
+    
+    except Exception as e:
+        raise HTTPException(
+            status_code = 500,
+            detail = f"Ocorreu um erro inesperado: {str(e)}"
+        )

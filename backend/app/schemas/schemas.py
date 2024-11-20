@@ -1,10 +1,18 @@
-from pydantic import BaseModel, EmailStr, field_validator, Field
+from pydantic import BaseModel, EmailStr, field_validator, Field, model_validator
 from typing import List, Optional
 from datetime import date
+from fastapi import UploadFile
 from dateutil.relativedelta import relativedelta
+from .enums import StatusGerais, NomeAnexos
 
 import re
-import schemas.cadastro as cad
+
+
+def get_data_atual():
+    return date.today()
+
+def get_data_mais_um_ano():
+    return get_data_atual() + relativedelta(year=1)
 
 
 
@@ -16,8 +24,6 @@ def checar_data_nascimento(dt_nasc : date) -> date:
         raise ValueError("A data de nascimento não pode ser uma data futura")
     if dt_nasc > dt_18_anos_atras:
         raise ValueError("Apenas pessoas maiores de 18 anos podem ter seus dados armazenados no sistema")
-    
-
     return dt_nasc 
 
 def validar_senha(senha : str) -> str:
@@ -32,8 +38,12 @@ def validar_senha(senha : str) -> str:
         raise ValueError("A senha deve conter pelo menos um dígito.")
     if not re.search(r"[!@#$%^&*,.?\":|]", senha):
         raise ValueError("A senha deve conter pelo menos uma caracter especial.")
-    
     return senha
+
+
+class Anexo(BaseModel):
+    nome_anexo : NomeAnexos
+    arquivo : UploadFile
 
 class Endereco(BaseModel):
     logradouro : str
@@ -48,8 +58,7 @@ class RepresentantePessoaJuridica(BaseModel):
     cpf : str = Field(min_length=11, max_length=11)
     data_nascimento : date
 
-    _validar_data_nascimento = field_validator('data_nascimento', allow_reuse=True)(checar_data_nascimento)
-
+    _validar_data_nascimento = field_validator('data_nascimento')(checar_data_nascimento)
 
 
 
@@ -57,8 +66,7 @@ class ProdutorCulturalBase(BaseModel):
     email : EmailStr
     senha : str = Field(min_length=8, description="Senha com no mínimo 8 caracteres")
     endereco : Endereco
-
-    _validar_senha = field_validator("senha", allow_reuse=True)(validar_senha)
+    _validar_senha = field_validator("senha")(validar_senha)
 
 
 
@@ -68,14 +76,14 @@ class ProdutorPessoaFisicaCreateRequest(ProdutorCulturalBase):
     cpf : str = Field(min_length=11, max_length=11)
     data_nascimento : date
 
-    _validar_data_nascimento = field_validator('data_nascimento', allow_reuse=True)(checar_data_nascimento)
+    _validar_data_nascimento = field_validator('data_nascimento')(checar_data_nascimento)
 
 
 
 class ProdutorPessoaJuridicaCreateRequest(ProdutorCulturalBase):
-    razao_social : str
-    nome_fantasia : str
     cnpj : str 
+    razao_soc : str
+    nome_fant : str
     representante : RepresentantePessoaJuridica
 
 
@@ -94,7 +102,7 @@ class RepresentantePessoaJuridicaUpdate(BaseModel):
     cpf : Optional[str] = None
     data_nascimento : Optional[date] = None
 
-    _validar_data_nascimento = field_validator('data_nascimento', allow_reuse=True)(checar_data_nascimento)
+    _validar_data_nascimento = field_validator('data_nascimento')(checar_data_nascimento)
 
 class ProdutorCulturalUpdateRequest(BaseModel):
     email : Optional[EmailStr] = None
@@ -102,7 +110,7 @@ class ProdutorCulturalUpdateRequest(BaseModel):
     ativo : Optional[int] = None
     endereco : Optional[Endereco] = None
 
-    _validar_senha = field_validator("senha", allow_reuse=True)(validar_senha)
+    _validar_senha = field_validator("senha")(validar_senha)
 
 
 class ProdutorPessoaFisicaUpdateRequest(ProdutorCulturalUpdateRequest):
@@ -110,7 +118,7 @@ class ProdutorPessoaFisicaUpdateRequest(ProdutorCulturalUpdateRequest):
     cpf : Optional[str] = None
     data_nascimento : Optional[date] = None
 
-    _validar_data_nascimento = field_validator('data_nascimento', allow_reuse=True)(checar_data_nascimento)
+    _validar_data_nascimento = field_validator('data_nascimento')(checar_data_nascimento)
 
 
 
@@ -120,19 +128,55 @@ class ProdutorPessoaJuridicaUpdateRequest(ProdutorCulturalUpdateRequest):
     cnpj : Optional[str] = None
     representante : Optional[RepresentantePessoaJuridica] = None
 
+class RenovacaoCreateRequest(BaseModel):
+    data_renovacao : date = Field(default_factory=get_data_atual)
+    data_expiracao : date = Field(default_factory=get_data_mais_um_ano)
 
 
-# Classes de Resposta de Requisição de Produtores Culturais
+
+# Classes de Requisição para atualização de Status dos Cadastros e Renovações
+class CadastroUpdateRequest(BaseModel):
+    status : Optional[StatusGerais] = None
+
+class RenovacaoUpdateRequest(BaseModel):
+    status : Optional[StatusGerais] = None
+
+
+
+
+# Classes de Resposta de Requisição
+class AnexosRetorno(BaseModel):
+    id_anexo : int
+    id_cadastro : int
+    id_renovacao : Optional[int] = None
+    nome_anexo : NomeAnexos
+    extensao : str
+    data_upload : date
+    status : StatusGerais
+
+    
+class CadastroRetorno(BaseModel):
+    id : int
+    status : StatusGerais
+    data_cadastro : date
+    anexos : List[AnexosRetorno]
+
+class RenovacaoRetorno(BaseModel):
+    id : int
+    data_renovacao : date
+    data_expiracao : date
+    status : StatusGerais
+    anexos : List[AnexosRetorno]
+
 class RepresentantePessoaJuridicaRetorno(BaseModel):
     nome_completo : str
-
 
 class ProdutorCulturalRetorno(BaseModel):
     id : str
     email : EmailStr
     ativo : int = 1
-    cadastro : cad.CadastroRetorno
-    renovacoes : Optional[List[cad.RenovacaoRetorno]] = None
+    cadastro : CadastroRetorno
+    renovacoes : Optional[List[RenovacaoRetorno]] = None
 
 class ProdutorPessoaFisicaRetorno(ProdutorCulturalRetorno):
     nome_completo : str
