@@ -48,7 +48,7 @@ async def criar_produtor_pessoa_fisica(
 
         dados_produtor = schemas.ProdutorPessoaFisicaCreateRequest(
             email = email,
-            senha = await senha,
+            senha = senha,
             nome_completo = nome_completo,
             cpf = cpf,
             data_nascimento = data_nascimento,

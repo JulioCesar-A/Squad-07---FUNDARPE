@@ -55,7 +55,7 @@ class RepositorioProdutor():
             # Criando instâncias com dados pré-validados para cada tabela do banco de dados
             produtor = models.ProdutorCultural(
             
-                id - uuid.uuid4(),
+                id = uuid.uuid4(),
 
                 email = dados_produtor.email,
                 senha = await gerar_hashing_senha(dados_produtor.senha),
