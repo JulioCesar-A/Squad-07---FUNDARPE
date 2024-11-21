@@ -1,0 +1,80 @@
+/* WelcomeSection.css */
+@font-face {
+  font-family: 'Questrial'; /* Nome personalizado para a fonte */
+  src: url('../../../assets/fonts/Questrial-Regular.ttf') format('truetype'); /* Caminho para o arquivo */
+  font-weight: 400; /* Peso normal */
+  font-style: normal; /* Estilo normal */
+}
+
+.welcome-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background-color: #ffffff; /* Fundo branco para destacar a seção */
+  position: relative;
+  flex-wrap: wrap;
+  overflow: visible;
+  text-align: center;
+}
+
+
+
+.welcome-image {
+  width: 100%; /* Limita a largura máxima para evitar distorções */
+  height: 100%; /* A altura será ajustada de acordo com a seção */
+
+  position: absolute;
+  top: 0;
+}
+
+.welcome-image.left {
+  left: 0;
+  transform: translateX(0%); /* Ajuste para centralizar à esquerda */
+  margin-top: 0;
+}
+
+.welcome-image.right {
+  right: 0;
+  transform: translateX(0%); /* Ajuste para centralizar à direita */
+  margin-top: 0;
+}
+
+.welcome-content {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 30px;
+  background-color: #ffffff;
+  z-index: 1; /* Para ficar acima das imagens laterais */
+}
+
+.welcome-title {
+  font-size: 50px;
+  font-weight: bold;
+  font-family: Questrial;
+  color: #000000;
+  margin-bottom: 10px;
+}
+
+.welcome-subtitle {
+  font-size: 29px;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.welcome-button {
+  width: 70%;
+  font-size: 28px;
+  padding: 12px 24px;
+  color: #69b2ff;
+  background-color: #fff;
+  border: 2px solid #69b2ff;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.welcome-button:hover {
+  background-color: #007BFF;
+  color: #fff;
+}
