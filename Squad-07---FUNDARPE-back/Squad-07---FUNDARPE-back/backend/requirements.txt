@@ -1,0 +1,8 @@
+asyncmy
+cryptography
+bcrypt
+pydantic
+python-dateutil
+sqlalchemy
+uvicorn
+fastapi[all]
