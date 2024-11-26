@@ -13,7 +13,7 @@ class ProdutorCultural(Base):
     senha = Column("SENHA_HASH", String(60), nullable=False)
     ativo = Column("ATIVO", Boolean, nullable=False)
 
-    # Relacionamentos
+    
     pessoa_fisica = relationship("ProdutorPessoaFisica", back_populates="produtor", uselist=False)
     pessoa_juridica = relationship("ProdutorPessoaJuridica", back_populates="produtor", uselist=False)
     endereco = relationship("Endereco", back_populates="produtor", uselist=False)
@@ -31,7 +31,7 @@ class ProdutorPessoaFisica(Base):
     cpf = Column("CPF", String(11), nullable=False)
     data_nasc = Column("DATA_NASC", DATE, nullable=False)
 
-    # Relacionamento
+    
     produtor = relationship("ProdutorCultural", back_populates="pessoa_fisica")
 
 
@@ -44,7 +44,7 @@ class ProdutorPessoaJuridica(Base):
     nome_fant = Column("NOME_FANT", String, nullable=False)
 
 
-    # Relacionamentos
+    
     produtor = relationship("ProdutorCultural", back_populates="pessoa_juridica")
     representante = relationship("RepresentantePessoaJuridica", back_populates="pessoa_juridica", uselist=False)
 
@@ -63,7 +63,7 @@ class Endereco(Base):
     estado = Column("ESTADO", String(20), nullable=False)
     cep = Column("CEP", String(8), nullable=False)
 
-    # Relacionamento
+    
     produtor = relationship("ProdutorCultural", back_populates="endereco")
 
 
@@ -76,7 +76,7 @@ class RepresentantePessoaJuridica(Base):
     cpf = Column("CPF", String(11), nullable=False, unique=True)
     data_nasc = Column("DATA_NASC", DATE, nullable=False)
 
-    # Relacionamento
+    
     pessoa_juridica = relationship("ProdutorPessoaJuridica", back_populates="representante")
 
 
@@ -91,7 +91,7 @@ class Cadastro(Base):
     status = Column("STATUS_CAD", Enum(StatusGerais), nullable=False, default=StatusGerais.RECEBIDO)
     data_cadastro = Column("DATA_CAD", DATE, nullable=False)
 
-    # Relacionamentos
+    
     produtor = relationship("ProdutorCultural", back_populates="cadastros")
     anexos = relationship("Anexo", back_populates="cadastro")
 
@@ -109,7 +109,7 @@ class Renovacao(Base):
     data_ren = Column("DATA_REN", DATE, nullable=False)
     data_exp = Column("DATA_EXP", DATE, nullable=False)
 
-    # Relacionamentos
+    
     cadastro = relationship("Cadastro")
     anexos = relationship("Anexo", back_populates="renovacao")
 
@@ -136,7 +136,7 @@ class Anexo(Base):
     
     arquivo = Column("ARQUIVO", BLOB, nullable=False)
 
-    # Relacionamentos
+    
     cadastro = relationship("Cadastro", back_populates="anexos")
     renovacao = relationship("Renovacao", back_populates="anexos")
 

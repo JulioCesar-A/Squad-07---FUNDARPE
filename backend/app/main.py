@@ -1,5 +1,6 @@
 from typing import List
-from fastapi import FastAPI, Depends, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, Depends, File, Form, HTTPException, UploadFile 
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from schemas import schemas
 from infra.sqlalchemy.repositories import produtorRep
@@ -7,6 +8,20 @@ from infra.sqlalchemy.config.database import get_db
 
 app = FastAPI()
 
+origins = [
+    "http://127.0.0.1:3000" ,
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials = True,
+    allow_methods=["*"],
+    allow_headers=["*"], 
+)
 
 @app.get("/")
 async def home():
@@ -57,7 +72,6 @@ async def criar_produtor_pessoa_fisica(
 
         nomes_anexos = nomes_anexos[0].split(",")
 
-        # Validando e processando os anexos
         if len(anexos) != len(nomes_anexos):
             raise HTTPException(
                 status_code=400
@@ -74,14 +88,12 @@ async def criar_produtor_pessoa_fisica(
             ))
 
 
-        # Chamando a função do repositório para inserir PF
         resultado = await repositorio_produtor.inserir_produtor_pessoa_fisica(dados_produtor, dados_anexos)
         return resultado
     
     except HTTPException as e:
         raise e
 
-        # Erros inesperados
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -144,7 +156,6 @@ async def criar_produtor_pessoa_juridica(
 
         nomes_anexos = nomes_anexos[0].split(",")
 
-        # Validando e processando os anexos
         if len(anexos) != len(nomes_anexos):
             raise HTTPException(
                 status_code=400
@@ -158,7 +169,6 @@ async def criar_produtor_pessoa_juridica(
                 arquivo = arquivo
             ))
 
-        # Chamando a função do repositório para inserir PJ
         resultado = await repositorio_produtor.inserir_produtor_pessoa_juridica(dados_produtor, dados_anexos)
         return resultado
 
