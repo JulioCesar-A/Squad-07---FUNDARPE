@@ -70,7 +70,7 @@ class ProdutorCulturalBase(BaseModel):
 
 
 
-# Classes de Requisição para criação de Produtores Culturais
+Classes de Requisição para criação de Produtores Culturais
 class ProdutorPessoaFisicaCreateRequest(ProdutorCulturalBase):
     nome_completo : str
     cpf : str = Field(min_length=11, max_length=11)
@@ -88,7 +88,7 @@ class ProdutorPessoaJuridicaCreateRequest(ProdutorCulturalBase):
 
 
 
-# Classes de Requisição para atualização de Produtores Culturais
+Classes de Requisição para atualização de Produtores Culturais
 class EnderecoUpdate(BaseModel):
     logradouro : Optional[str] = None
     numero : Optional[str] = None
@@ -134,7 +134,7 @@ class RenovacaoCreateRequest(BaseModel):
 
 
 
-# Classes de Requisição para atualização de Status dos Cadastros e Renovações
+Classes de Requisição para atualização de Status dos Cadastros e Renovações
 class CadastroUpdateRequest(BaseModel):
     status : Optional[StatusGerais] = None
 
@@ -144,7 +144,7 @@ class RenovacaoUpdateRequest(BaseModel):
 
 
 
-# Classes de Resposta de Requisição
+Classes de Resposta de Requisição
 class AnexosRetorno(BaseModel):
     id_anexo : int
     id_cadastro : int

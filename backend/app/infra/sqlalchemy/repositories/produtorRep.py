@@ -18,19 +18,19 @@ class RepositorioProdutor():
 
 
     async def calcular_id_anexo_por_cadastro(self, db, fk_cad):
-        # Consultando o maior ID_ANEXO 
+        Consultando o maior ID_ANEXO 
         query = select(models.Anexo).filter(models.Anexo.id_cadastro == fk_cad).order_by(models.Anexo.id.desc()).limit(1)
         result = await db.execute(query)
         maior_anexo = result.scalar_one_or_none()
 
-        # Calculando o próximo ID
+        Calculando o próximo ID
         proximo_id = (maior_anexo.id_cadastro if maior_anexo else 0) + 1
         return proximo_id
 
 
     async def inserir_produtor_pessoa_fisica(self, dados_produtor: schemas.ProdutorPessoaFisicaCreateRequest, dados_anexos : List[schemas.Anexo]):
         try:
-            # Verificar se o produtor já existe (via CPF)
+            Verificar se o produtor já existe (via CPF)
             query = select(models.ProdutorPessoaFisica).where(models.ProdutorPessoaFisica.cpf == dados_produtor.cpf)
             result = await self.db.execute(query)
             produtor_existente = result.scalar()
@@ -41,7 +41,7 @@ class RepositorioProdutor():
                     detail="Um produtor com este CPF já está registrado"
                 )
 
-            # Verificar se o produtor já existe (via e-mail)
+            Verificar se o produtor já existe (via e-mail)
             query = select(models.ProdutorPessoaFisica).where(models.ProdutorCultural.email == dados_produtor.email)
             result = await self.db.execute(query)
             produtor_existente = result.scalar()
@@ -52,7 +52,7 @@ class RepositorioProdutor():
                     detail="Um produtor com este e-mail já está registrado"
                 )
 
-            # Criando instâncias com dados pré-validados para cada tabela do banco de dados
+            Criando instâncias com dados pré-validados para cada tabela do banco de dados
             produtor = models.ProdutorCultural(
             
                 id - uuid.uuid4(),
@@ -122,7 +122,7 @@ class RepositorioProdutor():
                 self.db.add(anexo_inserir)
 
             
-            # Commit e refresh da instância recém-adicionada
+            Commit e refresh da instância recém-adicionada
             await self.db.commit()
             await self.db.refresh(produtor)
 
@@ -137,7 +137,7 @@ class RepositorioProdutor():
 
     async def inserir_produtor_pessoa_juridica (self, dados_produtor : schemas.ProdutorPessoaJuridicaCreateRequest, dados_anexos : List[schemas.Anexo]):
         try:
-            # Verificar se o produtor já existe (via CNPJ)
+            Verificar se o produtor já existe (via CNPJ)
             query = select(models.ProdutorPessoaJuridica).where(models.ProdutorPessoaJuridica.cnpj == dados_produtor.cnpj)
             result = await self.db.execute(query)
             produtor_existente = result.scalar()
@@ -148,7 +148,7 @@ class RepositorioProdutor():
                     detail="Um produtor com este CNPJ já está registrado"
                 )
 
-            # Verificar se o produtor já existe (via e-mail)
+            Verificar se o produtor já existe (via e-mail)
             query = select(models.ProdutorPessoaJuridica).where(models.ProdutorCultural.email == dados_produtor.email)
             result = await self.db.execute(query)
             produtor_existente = result.scalar()
@@ -159,7 +159,7 @@ class RepositorioProdutor():
                     detail="Um produtor com este e-mail já está registrado"
                 )
 
-            # Criando instâncias com dados pré-validados para cada tabela do banco de dados
+            Criando instâncias com dados pré-validados para cada tabela do banco de dados
             produtor = models.ProdutorCultural(
             
                 id = uuid.uuid4(),
@@ -241,7 +241,7 @@ class RepositorioProdutor():
                 )
                 self.db.add(anexo_inserir)
             
-            # Commit e refresh da instância recém-adicionada
+            Commit e refresh da instância recém-adicionada
             await self.db.commit()
             await self.db.refresh(produtor)
 
