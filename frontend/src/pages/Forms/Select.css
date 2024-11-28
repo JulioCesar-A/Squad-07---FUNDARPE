@@ -79,15 +79,6 @@
     color: #fff;
 }
 
-/* .container-seletor button Link {
-
-    background: linear-gradient(to right, #47ACE1 , #65C4AF );
-    display: inline-block;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-} */
-
 
 .container-seletor .button-cadastro:focus{
     outline: 0;
