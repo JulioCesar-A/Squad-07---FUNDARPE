@@ -1,0 +1,101 @@
+@font-face {
+    font-family: 'Questrial'; /* Nome personalizado para a fonte */
+    src: url('../../assets/fonts/Questrial-Regular.ttf') format('truetype'); /* Caminho para o arquivo */
+    font-weight: 400; /* Peso normal */
+    font-style: normal; /* Estilo normal */
+  }
+
+.section-form-cadastro {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.container-cadastro {
+    background-image: url(../../../assets/images/funcultura_fundo_colorido_nova_logo_01.jpg);
+    display: flex;
+    background-size: 100%;
+    flex-direction: column;
+    height: auto;
+    margin: 5vh 3vw;
+    background-position-x: center;
+    background-position-y: center;
+    width: 85%;
+    align-items: center;
+    justify-content: center;
+}
+
+.content-cadastro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    width: 95%;
+    margin: 2vh 0px;
+    background-color: #F0F0F0;
+}
+
+.form-etapa {
+    color: #000;
+    font-size: 32px;
+    text-align: center;
+    line-height: 39px;
+    margin-top: 10px;
+    font-family: Arial, sans-serif;
+    font-weight: 600;
+}
+
+.titulo-etapa {
+    text-align: center;
+    line-height: 60px;
+    font-size: 58px;
+    margin-top: 10px;
+    font-weight: 400;
+    font-family: Questrial, Arial, sans-serif;
+}
+
+.form-content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    row-gap: 10px;
+    column-gap: 6vw;
+    width: auto;
+    height: auto;
+}
+
+.form-content input {
+    width: 30vw;
+    height: 5vh;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #000;
+    background-color: transparent;
+    outline: none;
+    color: #000;
+    font-size: 20px;
+    
+}
+
+.form-content input::placeholder {
+    color: #000 0.6;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 27px;
+}
+
+.form-content input[type="date"] {
+    width: 30vw;
+    height: 5vh;
+    padding: 10px;
+    
+    border-radius: 10px;
+    border: 2px solid #000;
+    background-color: transparent;
+    outline: none;
+    color: #000;
+    font-size: 20px;
+}
