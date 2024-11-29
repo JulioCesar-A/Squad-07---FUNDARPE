@@ -15,7 +15,7 @@
     background-size: cover;
 }
 .container-seletor {
-    background-image:url('../../assets/images/funcultura_fundo_colorido_nova_logo_01.jpg');
+    background-image: url(../../assets/images/funcultura_fundo_colorido_nova_logo_01.jpg);
     height: 50vh;
     background-position-x: center;
     background-position-y: center;
