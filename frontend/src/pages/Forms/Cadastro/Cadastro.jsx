@@ -14,6 +14,94 @@ const Cadastro = () => {
     const titulosEtapas = ["INFORMAÇÕES PESSOAIS", "ENDEREÇO", "DOCUMENTOS", "E-MAIL E SENHA"];
     const [etapaAtual, setEtapaAtual] = useState(1);
 
+    const [formValues, setFormValues] = useState({
+
+        //Campos comuns
+
+        email : '',
+        senha : '',
+        confirmar_senha : '',
+
+        logradouro : '',
+        numero : '',
+        bairro : '',
+        cidade : '',
+        estado : '',
+        cep : '',
+
+        //Campos Pessoa Física
+
+        nome_completo : '',
+        cpf : '',
+        data_nascimento : '',
+
+        // Campos Pessoa Jurídica
+
+        razao_social : '',
+        cnpj : '',
+        nome_fantasia : '',
+            // Representante
+        nome_rep : '',
+        cpf_rep : '',
+        dt_nasc_rep : '',
+
+
+        // Campos de Anexos
+        anexos : [],
+        nomes_anexos : []
+    });
+
+    const [isformValid, setIsFormValid] = useState(false);
+
+    // Criar funções de validação de campos aqui
+
+        // Validação de senha
+    const validarSenha = (senha) => {
+        // Senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        return regex.test(senha);
+      };
+
+        // Comparação de senhas
+    const compararSenhas = (senha, confirmarSenha) => {
+        return senha === confirmarSenha;
+    }
+        // Validação de email
+    const validarEmail = (email) => {
+        // Email deve conter um @ e um .
+        const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return regex.test(email);
+    };
+
+        // Validação de CPF
+    const validarCPF = (cpf) => {
+        // CPF deve conter 11 dígitos
+        const regex = /^\d{11}$/;
+        return regex.test(cpf);
+    }
+        // Validação de CEP
+    const validarCep = (cep) => {
+        // CEP deve conter 8 dígitos
+        const regex = /^\d{8}$/;
+        return regex.test(cep);
+    }
+
+        // Validação de CNPJ
+    const validarCNPJ = (cnpj) => {
+        // CNPJ deve conter 14 dígitos
+        const regex = /^\d{14}$/;
+        return regex.test(cnpj);
+    }
+        // Validação data de nascimento
+    const validarDataNascimento = (data) => {
+        // Data não pode ser futura nem antes que 18 anos atrás
+        const dataNascimento = new Date(data);
+        const dataAtual = new Date();
+        const dataMinima = new Date();
+        dataMinima.setFullYear(dataAtual.getFullYear() - 18);
+        return dataNascimento < dataAtual && dataNascimento > dataMinima;
+    }
+
     const voltarEtapa = (event) => {
         event.preventDefault();
         if(etapaAtual > 1){
@@ -42,29 +130,29 @@ const Cadastro = () => {
                             {/* Etapa 1 PF */}
                             {etapaAtual === 1 && isPessoaFisica && (
                                 <>
-                                    <input type='text' name="nomeCompleto"id='nomeComp' placeholder='Nome Completo' required></input>
+                                    <input type='text' name="nome_completo" id='nomeComp' placeholder='Nome Completo' value={formValues.nome_completo} required></input>
 
-                                    <input type='email' name="email" id='email' placeholder='E-mail' required></input>
+                                    <input type='email' name="email" id='email' placeholder='E-mail' value={formValues.email} required></input>
                                     
-                                    <input type='text' name="CPF"id='CPF' placeholder='CPF (apenas números)' required></input>
+                                    <input type='text' name="cpf" id='CPF' placeholder='CPF (apenas números)' value={formValues.cpf} required></input>
 
-                                    <input type='password' name="senha" id='senha' placeholder='Senha' required></input>
+                                    <input type='password' name="senha" id='senha' placeholder='Senha' value={formValues.senha} required></input>
 
-                                    <input type='date' name="dataNascimento" id='dataNasc' placeholder='Data de Nascimento' required></input>
+                                    <input type='date' name="data_nascimento" id='dataNasc' placeholder='Data de Nascimento' required></input>
 
-                                    <input type='password' name="confirmarSenha" id='confirmSenha' placeholder='Confirmar Senha' required></input>
+                                    <input type='password' name="confirmar_senha" id='confirmSenha' placeholder='Confirmar Senha' required></input>
                                 </>
                             )}
 
                             {/* Etapa 1 PJ */}
                             {etapaAtual === 1 && !isPessoaFisica && (
                                 <>
-                                    <input type='text' name="razaoSocial" id='razaoSocial' placeholder='Razão Social' required></input>
-                                    <input type='text' name="nomeCompleto"id='nomeComp' placeholder='Nome Completo - Representante' required></input>
-                                    <input type='text' name="CNPJ" id='CNPJ' placeholder='CNPJ (apenas números)' required></input>
-                                    <input type='text' name="CPF"id='CPF' placeholder='CPF - Representante (apenas números)' required></input>
-                                    <input type='text' name="nomeFantasia" id='nomeFantasia' placeholder='Nome Fantasia' required></input>
-                                    <input type='date' name="dataNascimento" id='dataNasc' placeholder='Data de Nascimento - Representante' required></input>
+                                    <input type='text' name="razao_social" id='razaoSocial' placeholder='Razão Social' required></input>
+                                    <input type='text' name="nome_rep"id='nomeComp' placeholder='Nome Completo - Representante' required></input>
+                                    <input type='text' name="cnpj" id='CNPJ' placeholder='CNPJ (apenas números)' required></input>
+                                    <input type='text' name="cpf_rep"id='CPF' placeholder='CPF - Representante (apenas números)' required></input>
+                                    <input type='text' name="nome_fantasia" id='nomeFantasia' placeholder='Nome Fantasia' required></input>
+                                    <input type='date' name="dt_nasc_rep" id='dataNasc' placeholder='Data de Nascimento - Representante' required></input>
                                 </>
                             )}
 
@@ -144,7 +232,7 @@ const Cadastro = () => {
                                 <>
                                     <input type='email' name="email" id='email' placeholder='E-mail' required></input>
                                     <input type='password' name="senha" id='senha' placeholder='Senha' required></input>
-                                    <input type='password' name="" id='confirmSenha' placeholder='Confirmar Senha' required></input>
+                                    <input type='password' name="confirmar_senha" id='confirmSenha' placeholder='Confirmar Senha' required></input>
                                 </>
                             )}
                         
