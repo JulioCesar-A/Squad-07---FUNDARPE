@@ -102,6 +102,54 @@ const Cadastro = () => {
         return dataNascimento < dataAtual && dataNascimento > dataMinima;
     }
 
+
+    const validarAnexos = (anexos, nomeCampo) => {
+        // Verifica se há pelo menos um anexo e se o tamanho de cada arquivo é menor que 10MB
+        if (anexos.length === 0) return false;
+        if (nomeCampo === "Comp_Endereco" && anexos.length > 2) {
+            return false;
+        }
+        for (let i = 0; i < anexos.length; i++) {
+            if (anexos[i].size > 10 * 1024 * 1024) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    const validarCamposPreenchidos = (formValues) => {
+        // Verifica se todos os campos obrigatórios estão preenchidos
+        for (const key in formValues) {
+            if (formValues[key] === '' || formValues[key].length === 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Criar funções de alterações de campos aqui
+    const handleChangeInput = (event) => {
+        const { name, value } = event.target;
+        setFormValues({ 
+            ...formValues, [name]   : value 
+        });
+    }
+
+    const handleChangeFile = (event) => {
+        const { name, files } = event.target;
+        const nomes = [];
+        for (let i = 0; i < files.length; i++) {
+            nomes.push(files[i].name);
+        }
+        if (validarAnexos(files, name)) {
+            setFormValues({
+                ...formValues, anexos: files, nomes_anexos: nomes
+            });
+        } else {
+            alert("Um ou mais arquivos são inválidos. Certifique-se de que todos os arquivos tenham menos de 10MB e que o campo de comprovantes de endereço tenha no máximo 2 arquivos.");
+        }
+    }
+
     const voltarEtapa = (event) => {
         event.preventDefault();
         if(etapaAtual > 1){
@@ -111,9 +159,10 @@ const Cadastro = () => {
 
     const avancarEtapa = (event) => {
         event.preventDefault();
-        if(etapaAtual < totalEtapas){
+        if (etapaAtual < totalEtapas) {
             setEtapaAtual(etapaAtual + 1);
         }
+     
     }
 
     return (
@@ -130,41 +179,41 @@ const Cadastro = () => {
                             {/* Etapa 1 PF */}
                             {etapaAtual === 1 && isPessoaFisica && (
                                 <>
-                                    <input type='text' name="nome_completo" id='nomeComp' placeholder='Nome Completo' value={formValues.nome_completo} required></input>
+                                    <input type='text' name="nome_completo" id='nomeComp' placeholder='Nome Completo' value={formValues.nome_completo} onChange={handleChangeInput} required></input>
 
-                                    <input type='email' name="email" id='email' placeholder='E-mail' value={formValues.email} required></input>
+                                    <input type='email' name="email" id='email' placeholder='E-mail' value={formValues.email} onChange={handleChangeInput} required></input>
                                     
-                                    <input type='text' name="cpf" id='CPF' placeholder='CPF (apenas números)' value={formValues.cpf} required></input>
+                                    <input type='text' name="cpf" id='CPF' placeholder='CPF (apenas números)' value={formValues.cpf} onChange={handleChangeInput} required></input>
 
-                                    <input type='password' name="senha" id='senha' placeholder='Senha' value={formValues.senha} required></input>
+                                    <input type='password' name="senha" id='senha' placeholder='Senha' value={formValues.senha} onChange={handleChangeInput} required></input>
 
-                                    <input type='date' name="data_nascimento" id='dataNasc' placeholder='Data de Nascimento' required></input>
+                                    <input type='date' name="data_nascimento" id='dataNasc' placeholder='Data de Nascimento' value={formValues.data_nascimento} onChange={handleChangeInput} required></input>
 
-                                    <input type='password' name="confirmar_senha" id='confirmSenha' placeholder='Confirmar Senha' required></input>
+                                    <input type='password' name="confirmar_senha" id='confirmSenha' placeholder='Confirmar Senha' value={formValues.confirmar_senha} onChange={handleChangeInput} required></input>
                                 </>
                             )}
 
                             {/* Etapa 1 PJ */}
                             {etapaAtual === 1 && !isPessoaFisica && (
                                 <>
-                                    <input type='text' name="razao_social" id='razaoSocial' placeholder='Razão Social' required></input>
-                                    <input type='text' name="nome_rep"id='nomeComp' placeholder='Nome Completo - Representante' required></input>
-                                    <input type='text' name="cnpj" id='CNPJ' placeholder='CNPJ (apenas números)' required></input>
-                                    <input type='text' name="cpf_rep"id='CPF' placeholder='CPF - Representante (apenas números)' required></input>
-                                    <input type='text' name="nome_fantasia" id='nomeFantasia' placeholder='Nome Fantasia' required></input>
-                                    <input type='date' name="dt_nasc_rep" id='dataNasc' placeholder='Data de Nascimento - Representante' required></input>
+                                    <input type='text' name="razao_social" id='razaoSocial' placeholder='Razão Social' value={formValues.razao_social} onChange={handleChangeInput} required></input>
+                                    <input type='text' name="nome_rep" id='nomeComp' placeholder='Nome Completo - Representante' value={formValues.nome_rep} onChange={handleChangeInput} required></input>
+                                    <input type='text' name="cnpj" id='CNPJ' placeholder='CNPJ (apenas números)' value={formValues.cnpj} onChange={handleChangeInput} required></input>
+                                    <input type='text' name="cpf_rep" id='CPF' placeholder='CPF - Representante (apenas números)' value={formValues.cpf_rep} onChange={handleChangeInput} required></input>
+                                    <input type='text' name="nome_fantasia" id='nomeFantasia' placeholder='Nome Fantasia' value={formValues.nome_fantasia} onChange={handleChangeInput} required></input>
+                                    <input type='date' name="dt_nasc_rep" id='dataNasc' placeholder='Data de Nascimento - Representante' value={formValues.dt_nasc_rep} onChange={handleChangeInput} required></input>
                                 </>
                             )}
 
                             {/* Etapa 2 */}
                             {etapaAtual === 2 && (
                                 <>
-                                    <input type='text' name="cep" id='cep' placeholder='CEP (apenas números)' required></input>
-                                    <input type='text' name="bairro" id='bairro' placeholder='Bairro' required></input>
-                                    <input type='text' name="logradouro" id='logradouro' placeholder='Logradouro' required></input>
-                                    <input type='text' name="cidade" id='cidade' placeholder='Cidade' required></input>
-                                    <input type='text' name="numero" id='numero' placeholder='Número' required></input>
-                                    <input type='text' name="estado" id='estado' placeholder='Estado' required></input>
+                                    <input type='text' name="cep" id='cep' placeholder='CEP (apenas números)' value={formValues.cep} onChange={handleChangeInput} required></input>
+                                    <input type='text' name="bairro" id='bairro' placeholder='Bairro' value={formValues.bairro} onChange={handleChangeInput} required></input>
+                                    <input type='text' name="logradouro" id='logradouro' placeholder='Logradouro' value={formValues.logradouro} onChange={handleChangeInput} required></input>
+                                    <input type='text' name="cidade" id='cidade' placeholder='Cidade' value={formValues.cidade} onChange={handleChangeInput} required></input>
+                                    <input type='text' name="numero" id='numero' placeholder='Número' value={formValues.numero} onChange={handleChangeInput} required></input>
+                                    <input type='text' name="estado" id='estado' placeholder='Estado' value={formValues.estado} onChange={handleChangeInput} required></input>
                                 </>
                             )}
 
@@ -174,23 +223,23 @@ const Cadastro = () => {
                             <>  
                                 <div className="container-input-file">
                                     <label htmlFor="copiaIdentidade">Cópia RG, CNH ou CTPS</label>
-                                    <input type="file" name="copiaIdentidade" id="copiaIdentidade" required= { true }/>
+                                    <input type="file" name="Identidade" id="copiaIdentidade" required= { true } onChange={handleChangeFile} />
                                 </div>
                                 <div className="container-input-file">
                                     <label htmlFor="certRegFisc">Certidão de Regularidade Fiscal</label>
-                                    <input type="file" name="certidaoRegularidadeFiscal" id="certRegFisc" required= { true }/>
+                                    <input type="file" name="Cert_Reg_Fiscal" id="certRegFisc" required= { true } onChange={handleChangeFile} />
                                 </div>
                                 <div className="container-input-file">
                                     <label htmlFor="compEndereco">Comprovantes de Endereço</label>
-                                    <input type="file" name="comprovantesEndereco" id="compEndereco" required= { true } multiple= { true } />
+                                    <input type="file" name="Comp_Endereco" id="compEndereco" required= { true } multiple= { true } onChange={handleChangeFile} />
                                 </div>
                                 <div className="container-input-file">
                                     <label htmlFor="certPrestCont">Prestação de Contas Funcultura</label>
-                                    <input type="file" name="prestacaoContasFuncultura" id="certPrestCont" required= { true }/>
+                                    <input type="file" name="Cert_Prest_Conta" id="certPrestCont" required= { true } onChange={handleChangeFile} />
                                 </div>
                                 <div className="container-input-file">
                                     <label htmlFor="curriculo">Currículo do Produtor Cultural</label>
-                                    <input type="file" name="curriculoProdutorCultural" id="curriculo" required= { true }/>
+                                    <input type="file" name="Curriculo" id="curriculo" required= { true } onChange={handleChangeFile} />
                                 </div>
                                 
                             </>    
@@ -204,24 +253,28 @@ const Cadastro = () => {
                                 <>
 
                                     <div className="container-input-file">
-                                        <label htmlFor="copiaIdentidade">Cópia RG, CNH ou CTPS</label>
-                                        <input type="file" name="" id="copiaIdentidade" required/>
+                                        <label htmlFor="contratoEstatutoSocial">Cópia Contrato / Estatuto Social </label>
+                                        <input type="file" name="Contrato_Social" id="contratoEstatutoSocial" required= { true } onChange={handleChangeFile} />
                                     </div>
                                     <div className="container-input-file">
                                         <label htmlFor="certRegFisc">Certidão de Regularidade Fiscal</label>
-                                        <input type="file" name="certidaoRegularidadeFiscal" id="certRegFisc" required= { true }/>
+                                        <input type="file" name="Cert_Reg_Fisc"al id="certRegFisc" required= { true } onChange={handleChangeFile} />
                                     </div>
                                     <div className="container-input-file">
                                         <label htmlFor="compEndereco">Comprovantes de Endereço</label>
-                                        <input type="file" name="comprovantesEndereco" id="compEndereco" required= { true } multiple= { true } />
+                                        <input type="file" name="Comp_Endereco" id="compEndereco" required= { true } multiple= { true } onChange={handleChangeFile} />
                                     </div>
                                     <div className="container-input-file">
                                         <label htmlFor="certPrestCont">Prestação de Contas Funcultura</label>
-                                        <input type="file" name="prestacaoContasFuncultura" id="certPrestCont" required= { true }/>
+                                        <input type="file" name="Cert_Prest_Conta" id="certPrestCont" required= { true } onChange={handleChangeFile} />
                                     </div>
                                     <div className="container-input-file">
-                                        <label htmlFor="curriculo">Currículo do Produtor Cultural</label>
-                                        <input type="file" name="curriculoProdutorCultural" id="curriculo" required= { true } />
+                                        <label htmlFor="curriculo">Currículo da Empresa</label>
+                                        <input type="file" name="Curriculo" id="curriculo" required= { true } onChange={handleChangeFile} />
+                                    </div>
+                                    <div className="container-input-file">
+                                        <label htmlFor="cartaoCNPJ">Cópia Cartão CNPJ</label>
+                                        <input type="file" name="Cartao_CNPJ" id="cartaoCNPJ" required= { true } onChange={handleChangeFile} />
                                     </div>
 
                                 </>
@@ -230,9 +283,9 @@ const Cadastro = () => {
                             {etapaAtual === 4 && (
 
                                 <>
-                                    <input type='email' name="email" id='email' placeholder='E-mail' required></input>
-                                    <input type='password' name="senha" id='senha' placeholder='Senha' required></input>
-                                    <input type='password' name="confirmar_senha" id='confirmSenha' placeholder='Confirmar Senha' required></input>
+                                    <input type='email' name="email" id='email' placeholder='E-mail' value={formValues.email} onChange={handleChangeInput} required></input>
+                                    <input type='password' name="senha" id='senha' placeholder='Senha' value={formValues.senha} onChange={handleChangeInput} required></input>
+                                    <input type='password' name="confirmar_senha" id='confirmSenha' placeholder='Confirmar Senha' value={formValues.confirmar_senha} onChange={handleChangeInput} required></input>
                                 </>
                             )}
                         
@@ -240,7 +293,7 @@ const Cadastro = () => {
                         <div className='form-buttons'>
                             {etapaAtual === 1 ? <Link to="/select" className='botao-voltar'>Voltar</Link> : <button onClick={voltarEtapa} className='botao-voltar'>Voltar</button>}
 
-                            { etapaAtual < totalEtapas ? <button onClick={avancarEtapa} className='botao-avancar'>Avançar</button> : <button className='botao-avancar'>Concluir</button>}
+                            { etapaAtual < totalEtapas ? <button type="button" onClick={avancarEtapa}className='botao-avancar'>Avançar</button> : <button type="submit" className='botao-avancar'>Concluir</button>}
                         </div>
                     </form>
 
