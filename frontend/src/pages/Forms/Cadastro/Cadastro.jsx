@@ -7,9 +7,7 @@ const Cadastro = () => {
 
     const isPessoaFisica = tipo === "pessoa-fisica";
 
-    const [totalEtapas, setTotalEtapas] = useState(
-        isPessoaFisica ? 3 : 4
-    );
+    const totalEtapas = isPessoaFisica ? 3 : 4;
 
     const titulosEtapas = ["INFORMAÇÕES PESSOAIS", "ENDEREÇO", "DOCUMENTOS", "E-MAIL E SENHA"];
     const [etapaAtual, setEtapaAtual] = useState(1);
@@ -53,58 +51,70 @@ const Cadastro = () => {
 
     const [isformValid, setIsFormValid] = useState(false);
 
-    // Criar funções de validação de campos aqui
+    // const [isformValid, setIsFormValid] = useState(false);
 
-        // Validação de senha
     const validarSenha = (senha) => {
-        // Senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial
         const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-        return regex.test(senha);
-      };
+        const isValid = regex.test(senha);
+        if (!isValid) {
+            alert("Senha inválida. A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial.");
+        }
+        return isValid;
+    }
 
-        // Comparação de senhas
     const compararSenhas = (senha, confirmarSenha) => {
         return senha === confirmarSenha;
     }
-        // Validação de email
+
     const validarEmail = (email) => {
-        // Email deve conter um @ e um .
         const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        return regex.test(email);
+        const isValid = regex.test(email);
+        if (!isValid) {
+            alert("Email inválido. O email deve conter um '@' e um '.'.")
+        }
+        return isValid;
     };
 
-        // Validação de CPF
     const validarCPF = (cpf) => {
-        // CPF deve conter 11 dígitos
         const regex = /^\d{11}$/;
-        return regex.test(cpf);
-    }
-        // Validação de CEP
-    const validarCep = (cep) => {
-        // CEP deve conter 8 dígitos
-        const regex = /^\d{8}$/;
-        return regex.test(cep);
+        const isValid = regex.test(cpf);
+        if (!isValid) {
+            alert("CPF inválido. O CPF deve conter 11 dígitos.");
+        }
+        return isValid;
     }
 
-        // Validação de CNPJ
-    const validarCNPJ = (cnpj) => {
-        // CNPJ deve conter 14 dígitos
-        const regex = /^\d{14}$/;
-        return regex.test(cnpj);
+    const validarCep = (cep) => {
+        const regex = /^\d{8}$/;
+        const isValid = regex.test(cep);
+        if (!isValid) {
+            alert("CEP inválido. O CEP deve conter 8 dígitos.");
+        }
+        return isValid;
     }
-        // Validação data de nascimento
+
+    const validarCNPJ = (cnpj) => {
+        const regex = /^\d{14}$/;
+        const isValid = regex.test(cnpj);
+        if (!isValid) {
+            alert("CNPJ inválido. O CNPJ deve conter 14 dígitos.");
+        }
+        return isValid;
+    }
+
     const validarDataNascimento = (data) => {
-        // Data não pode ser futura nem antes que 18 anos atrás
         const dataNascimento = new Date(data);
         const dataAtual = new Date();
         const dataMinima = new Date();
         dataMinima.setFullYear(dataAtual.getFullYear() - 18);
-        return dataNascimento < dataAtual && dataNascimento > dataMinima;
+        const isValid = dataNascimento < dataMinima;
+        if (!isValid) {
+            alert("Data de nascimento inválida. Você deve ter pelo menos 18 anos.");
+        }
+        return isValid;
     }
 
-
     const validarAnexos = (anexos, nomeCampo) => {
-        // Verifica se há pelo menos um anexo e se o tamanho de cada arquivo é menor que 10MB
         if (anexos.length === 0) return false;
         if (nomeCampo === "Comp_Endereco" && anexos.length > 2) {
             return false;
@@ -118,7 +128,6 @@ const Cadastro = () => {
     }
 
     const validarCamposPreenchidos = (formValues) => {
-        // Verifica se todos os campos obrigatórios estão preenchidos
         for (const key in formValues) {
             if (formValues[key] === '' || formValues[key].length === 0) {
                 return false;
@@ -127,7 +136,50 @@ const Cadastro = () => {
         return true;
     }
 
-    // Criar funções de alterações de campos aqui
+    const validarEtapa = (etapa, tipo, formValues) => {
+        switch (etapa) {
+            case 1:
+                if (tipo === "pessoa-fisica") {
+                    return validarCamposPreenchidos({
+                        nome_completo: formValues.nome_completo,
+                        email: formValues.email,
+                        cpf: formValues.cpf,
+                        senha: formValues.senha,
+                        confirmar_senha: formValues.confirmar_senha,
+                        data_nascimento: formValues.data_nascimento
+                    }) && validarEmail(formValues.email) && validarCPF(formValues.cpf) && validarSenha(formValues.senha) && compararSenhas(formValues.senha, formValues.confirmar_senha) && validarDataNascimento(formValues.data_nascimento);
+                } else {
+                    return validarCamposPreenchidos({
+                        razao_social: formValues.razao_social,
+                        nome_rep: formValues.nome_rep,
+                        cnpj: formValues.cnpj,
+                        cpf_rep: formValues.cpf_rep,
+                        nome_fantasia: formValues.nome_fantasia,
+                        dt_nasc_rep: formValues.dt_nasc_rep
+                    }) && validarCNPJ(formValues.cnpj) && validarCPF(formValues.cpf_rep) && validarDataNascimento(formValues.dt_nasc_rep);
+                }
+            case 2:
+                return validarCamposPreenchidos({
+                    cep: formValues.cep,
+                    bairro: formValues.bairro,
+                    logradouro: formValues.logradouro,
+                    cidade: formValues.cidade,
+                    numero: formValues.numero,
+                    estado: formValues.estado
+                }) && validarCep(formValues.cep);
+            case 3:
+                return validarAnexos(formValues.anexos, "Comp_Endereco");
+            case 4:
+                return validarCamposPreenchidos({
+                    email: formValues.email,
+                    senha: formValues.senha,
+                    confirmar_senha: formValues.confirmar_senha
+                }) && validarEmail(formValues.email) && validarSenha(formValues.senha) && compararSenhas(formValues.senha, formValues.confirmar_senha);
+            default:
+                return false;
+        }
+    }
+
     const handleChangeInput = (event) => {
         const { name, value } = event.target;
         setFormValues({ 
@@ -159,11 +211,48 @@ const Cadastro = () => {
 
     const avancarEtapa = (event) => {
         event.preventDefault();
-        if (etapaAtual < totalEtapas) {
+        if (etapaAtual < totalEtapas && validarEtapa(etapaAtual, tipo, formValues)) {
             setEtapaAtual(etapaAtual + 1);
+        } else {
+            alert("Por favor, preencha todos os campos obrigatórios corretamente.");
         }
-     
     }
+
+    const onSubmit = async (event) => {
+        event.preventDefault();
+        if (validarEtapa(etapaAtual, tipo, formValues)) {
+            try {
+                const formData = new FormData();
+                for (const key in formValues) {
+                    if (key === 'anexos') {
+                        for (let i = 0; i < formValues[key].length; i++) {
+                            formData.append(key, formValues[key][i]);
+                        }
+                    } else {
+                        formData.append(key, formValues[key]);
+                    }
+                }
+
+                const apiUrl = tipo === 'pessoa-fisica' ? 'http://localhost:8000/produtor-pessoa-fisica' : 'http://localhost:8000/produtor-pessoa-juridica';
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    alert('Cadastro realizado com sucesso!');
+                } else {
+                    alert('Erro ao realizar cadastro. Tente novamente.');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao realizar cadastro. Tente novamente.');
+            }
+        } else {
+            alert('Por favor, preencha todos os campos obrigatórios corretamente.');
+        }
+    };
 
     return (
        <section className='section-form-cadastro'>
@@ -171,24 +260,15 @@ const Cadastro = () => {
                 <div className='content-cadastro'>
                     <h2 className='form-etapa'>Etapa {etapaAtual}</h2>
                     <h2 className='titulo-etapa'>{titulosEtapas.at( etapaAtual - 1 )}</h2>
-
-
-                        
-                    <form action="" encType='multipart/form-data' method="post">
+                    <form onSubmit={onSubmit} encType='multipart/form-data' method="post">
                         <div className={etapaAtual === 4 ? 'form-content etapa-4' : 'form-content'}>
-                            {/* Etapa 1 PF */}
                             {etapaAtual === 1 && isPessoaFisica && (
                                 <>
                                     <input type='text' name="nome_completo" id='nomeComp' placeholder='Nome Completo' value={formValues.nome_completo} onChange={handleChangeInput} required></input>
-
                                     <input type='email' name="email" id='email' placeholder='E-mail' value={formValues.email} onChange={handleChangeInput} required></input>
-                                    
                                     <input type='text' name="cpf" id='CPF' placeholder='CPF (apenas números)' value={formValues.cpf} onChange={handleChangeInput} required></input>
-
                                     <input type='password' name="senha" id='senha' placeholder='Senha' value={formValues.senha} onChange={handleChangeInput} required></input>
-
                                     <input type='date' name="data_nascimento" id='dataNasc' placeholder='Data de Nascimento' value={formValues.data_nascimento} onChange={handleChangeInput} required></input>
-
                                     <input type='password' name="confirmar_senha" id='confirmSenha' placeholder='Confirmar Senha' value={formValues.confirmar_senha} onChange={handleChangeInput} required></input>
                                 </>
                             )}
@@ -219,39 +299,33 @@ const Cadastro = () => {
 
                             {/* Etapa 3  PF*/}
                             {etapaAtual === 3 && isPessoaFisica && (
-
-                            <>  
-                                <div className="container-input-file">
-                                    <label htmlFor="copiaIdentidade">Cópia RG, CNH ou CTPS</label>
-                                    <input type="file" name="Identidade" id="copiaIdentidade" required= { true } onChange={handleChangeFile} />
-                                </div>
-                                <div className="container-input-file">
-                                    <label htmlFor="certRegFisc">Certidão de Regularidade Fiscal</label>
-                                    <input type="file" name="Cert_Reg_Fiscal" id="certRegFisc" required= { true } onChange={handleChangeFile} />
-                                </div>
-                                <div className="container-input-file">
-                                    <label htmlFor="compEndereco">Comprovantes de Endereço</label>
-                                    <input type="file" name="Comp_Endereco" id="compEndereco" required= { true } multiple= { true } onChange={handleChangeFile} />
-                                </div>
-                                <div className="container-input-file">
-                                    <label htmlFor="certPrestCont">Prestação de Contas Funcultura</label>
-                                    <input type="file" name="Cert_Prest_Conta" id="certPrestCont" required= { true } onChange={handleChangeFile} />
-                                </div>
-                                <div className="container-input-file">
-                                    <label htmlFor="curriculo">Currículo do Produtor Cultural</label>
-                                    <input type="file" name="Curriculo" id="curriculo" required= { true } onChange={handleChangeFile} />
-                                </div>
-                                
-                            </>    
-                            
+                                <>  
+                                    <div className="container-input-file">
+                                        <label htmlFor="copiaIdentidade">Cópia RG, CNH ou CTPS</label>
+                                        <input type="file" name="Identidade" id="copiaIdentidade" required= { true } onChange={handleChangeFile} />
+                                    </div>
+                                    <div className="container-input-file">
+                                        <label htmlFor="certRegFisc">Certidão de Regularidade Fiscal</label>
+                                        <input type="file" name="Cert_Reg_Fiscal" id="certRegFisc" required= { true } onChange={handleChangeFile} />
+                                    </div>
+                                    <div className="container-input-file">
+                                        <label htmlFor="compEndereco">Comprovantes de Endereço</label>
+                                        <input type="file" name="Comp_Endereco" id="compEndereco" required= { true } multiple= { true } onChange={handleChangeFile} />
+                                    </div>
+                                    <div className="container-input-file">
+                                        <label htmlFor="certPrestCont">Prestação de Contas Funcultura</label>
+                                        <input type="file" name="Cert_Prest_Conta" id="certPrestCont" required= { true } onChange={handleChangeFile} />
+                                    </div>
+                                    <div className="container-input-file">
+                                        <label htmlFor="curriculo">Currículo do Produtor Cultural</label>
+                                        <input type="file" name="Curriculo" id="curriculo" required= { true } onChange={handleChangeFile} />
+                                    </div>
+                                </>
                             )}
-
 
                             {/* Etapa 3  PJ*/}
                             {etapaAtual === 3 && !isPessoaFisica && (
-
                                 <>
-
                                     <div className="container-input-file">
                                         <label htmlFor="contratoEstatutoSocial">Cópia Contrato / Estatuto Social </label>
                                         <input type="file" name="Contrato_Social" id="contratoEstatutoSocial" required= { true } onChange={handleChangeFile} />
@@ -276,29 +350,23 @@ const Cadastro = () => {
                                         <label htmlFor="cartaoCNPJ">Cópia Cartão CNPJ</label>
                                         <input type="file" name="Cartao_CNPJ" id="cartaoCNPJ" required= { true } onChange={handleChangeFile} />
                                     </div>
-
                                 </>
                             )}
+
                             {/* Etapa 4 - Exclusiva para PJ*/}
                             {etapaAtual === 4 && (
-
                                 <>
                                     <input type='email' name="email" id='email' placeholder='E-mail' value={formValues.email} onChange={handleChangeInput} required></input>
                                     <input type='password' name="senha" id='senha' placeholder='Senha' value={formValues.senha} onChange={handleChangeInput} required></input>
                                     <input type='password' name="confirmar_senha" id='confirmSenha' placeholder='Confirmar Senha' value={formValues.confirmar_senha} onChange={handleChangeInput} required></input>
                                 </>
                             )}
-                        
                         </div>
                         <div className='form-buttons'>
                             {etapaAtual === 1 ? <Link to="/select" className='botao-voltar'>Voltar</Link> : <button onClick={voltarEtapa} className='botao-voltar'>Voltar</button>}
-
                             { etapaAtual < totalEtapas ? <button type="button" onClick={avancarEtapa}className='botao-avancar'>Avançar</button> : <button type="submit" className='botao-avancar'>Concluir</button>}
                         </div>
                     </form>
-
-                    
-                    
                 </div>
             </div>
        </section> 
