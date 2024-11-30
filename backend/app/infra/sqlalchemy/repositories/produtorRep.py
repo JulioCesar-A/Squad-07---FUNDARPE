@@ -1,7 +1,7 @@
 import os
 import uuid
 from typing import List
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from fastapi import HTTPException
 from schemas import schemas
 from ..models import models
@@ -55,7 +55,7 @@ class RepositorioProdutor():
             # Criando instâncias com dados pré-validados para cada tabela do banco de dados
             produtor = models.ProdutorCultural(
             
-                id - uuid.uuid4(),
+                id = uuid.uuid4(),
 
                 email = dados_produtor.email,
                 senha = await gerar_hashing_senha(dados_produtor.senha),
@@ -133,6 +133,14 @@ class RepositorioProdutor():
             raise HTTPException(
                 status_code=400,
                 detail="Erro de integridade: dados duplicados ou incorretos"
+            )
+
+        except SQLAlchemyError as e:
+            print(e)
+            print(f"SQLAlchemy error: {str(e)}")
+            raise HTTPException(
+                status_code=400,
+                detail="Erro de banco de dados"
             )
 
     async def inserir_produtor_pessoa_juridica (self, dados_produtor : schemas.ProdutorPessoaJuridicaCreateRequest, dados_anexos : List[schemas.Anexo]):

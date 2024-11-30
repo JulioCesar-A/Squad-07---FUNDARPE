@@ -12,10 +12,10 @@ class StatusGerais(PyEnum):
 
 class NomeAnexos(PyEnum):
 
-    RG_CNH_CART_TRAB = "RG_CNH_Carteira_Trabalho"
+    IDENTIDADE = "Identidade"
     CONTRATO_SOCIAL = "Contrato_Social"
     CURRICULO = "Curriculo"
-    COMPROV_END = "Comprovante de Endereco"
+    COMP_ENDERECO = "Comp_Endereco"
     CARTAO_CNPJ = "Cartao_CNPJ"
-    CERT_PREST_CONTA = "Certidao_Prestacao_Contas"
-    CERT_REG_FISCAL = "Certidao_Regularidade_Fiscal"
+    CERT_PREST_CONTA = "Cert_Prest_Conta"
+    CERT_REG_FISCAL = "Cert_Reg_Fiscal"
