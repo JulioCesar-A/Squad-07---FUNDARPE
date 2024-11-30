@@ -238,7 +238,7 @@ const Cadastro = () => {
 
     const avancarEtapa = (event) => {
         event.preventDefault();
-        if (etapaAtual < totalEtapas) {
+        if (etapaAtual < totalEtapas && validarEtapa(etapaAtual, tipo, formValues)) {
             setEtapaAtual(etapaAtual + 1);
         } else {
             alert("Por favor, preencha todos os campos obrigatórios corretamente.");
