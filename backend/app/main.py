@@ -1,5 +1,6 @@
 from typing import List
-from fastapi import FastAPI, Depends, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, Depends, File, Form, HTTPException, UploadFile 
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import date
@@ -17,6 +18,7 @@ origins = [
     "http://localhost:3000",
     "http://localhost:5173",
 ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -77,7 +79,6 @@ async def criar_produtor_pessoa_fisica(
 
         nomes_anexos = nomes_anexos[0].split(",")
 
-        # Validando e processando os anexos
         if len(anexos) != len(nomes_anexos):
             print("Erro na quantidade de anexos")
             raise HTTPException(
@@ -95,7 +96,6 @@ async def criar_produtor_pessoa_fisica(
             ))
 
 
-        # Chamando a função do repositório para inserir PF
         resultado = await repositorio_produtor.inserir_produtor_pessoa_fisica(dados_produtor, dados_anexos)
         return resultado
     
@@ -104,16 +104,6 @@ async def criar_produtor_pessoa_fisica(
     except HTTPException as e:
         raise e
 
-
-    except SQLAlchemyError as e:
-        print(e)
-        print(f"SQLAlchemy error: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail="Erro no banco de dados"
-        )
-
-        # Erros inesperados
     except Exception as e:
         print(e)
         raise HTTPException(
@@ -178,7 +168,6 @@ async def criar_produtor_pessoa_juridica(
 
         nomes_anexos = nomes_anexos[0].split(",")
 
-        # Validando e processando os anexos
         if len(anexos) != len(nomes_anexos):
             raise HTTPException(
                 status_code=400
@@ -192,7 +181,6 @@ async def criar_produtor_pessoa_juridica(
                 arquivo = arquivo
             ))
 
-        # Chamando a função do repositório para inserir PJ
         resultado = await repositorio_produtor.inserir_produtor_pessoa_juridica(dados_produtor, dados_anexos)
         return resultado
 
