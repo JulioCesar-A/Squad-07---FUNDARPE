@@ -1,0 +1,59 @@
+@font-face {
+  font-family: 'Questrial'; /* Nome personalizado para a fonte */
+  src: url('../../../assets/fonts/Questrial-Regular.ttf') format('truetype'); /* Caminho para o arquivo */
+  font-weight: 400; /* Peso normal */
+  font-style: normal; /* Estilo normal */
+}
+
+.about-section {
+    padding: 40px 20px;
+    background-color: #5bb3f1; /* Cor de fundo azul clara */
+    display: flex;
+    justify-content: center;
+  }
+  
+  .about-container {
+    max-width: 800px;
+    text-align: center;
+    color: #333; /* Cor do texto */
+  }
+  
+  .about-title {
+    font-size: 40px;
+    font-weight: 600;
+    color: #ffffff; /* Azul escuro para o título */
+    font-family: Questrial;
+    margin-bottom: 50px;
+  }
+  
+  .about-description {
+    font-size: 20px;
+    line-height: 1.6;
+    color: #ffffff;
+    margin-bottom: 20px;
+  }
+  
+  .about-areas-list {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .about-areas-list li {
+    font-size: 18px;
+    font-weight: 500;
+    color: #ffffff;
+    padding: 5px 15px;
+  }
+  
+  .about-footer {
+    font-size: 18px;
+    color: #ffffff;
+    margin-top: 20px;
+  }
+  
